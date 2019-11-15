@@ -458,6 +458,7 @@ uint8_t QUEUE_LENGHT = 32;
 uint8_t quit_relay_button = 0;
 
 volatile uint8_t disable_up_down_button = 0; //Flag denied up and down button
+volatile uint8_t disable_left_right_button = 0; 
 
 volatile uint8_t adc_bunch = 0; //Index half buffer ADC
 
@@ -3241,12 +3242,14 @@ void Display_Task(void const * argument)
 						{
 							edit_mode_int(&mode_relay);
 							disable_up_down_button = 0;
+							disable_left_right_button = 1;
 						}
 						else 
 						{
 							snprintf(buffer, sizeof buffer, "%d", mode_relay);			
 							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 							disable_up_down_button = 1;
+							disable_left_right_button = 0;
 						}
 												
 						//ssd1306_UpdateScreen();				
@@ -3274,12 +3277,14 @@ void Display_Task(void const * argument)
 						{
 							edit_mode_int(&delay_relay);
 							disable_up_down_button = 0;
+							disable_left_right_button = 1;
 						}
 						else 
 						{
 							snprintf(buffer, sizeof buffer, "%d", delay_relay);			
 							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 							disable_up_down_button = 1;
+							disable_left_right_button = 0;
 						}
 												
 						//ssd1306_UpdateScreen();				
@@ -3307,12 +3312,14 @@ void Display_Task(void const * argument)
 						{
 							edit_mode_int(&delay_relay_exit);
 							disable_up_down_button = 0;
+							disable_left_right_button = 1;
 						}
 						else 
 						{
 							snprintf(buffer, sizeof buffer, "%d", delay_relay_exit);			
 							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 							disable_up_down_button = 1;
+							disable_left_right_button = 0;
 						}
 			
 												
@@ -3339,12 +3346,14 @@ void Display_Task(void const * argument)
 						{
 							edit_mode_int(&test_relay);
 							disable_up_down_button = 0;
+							disable_left_right_button = 1;
 						}
 						else 
 						{
 							snprintf(buffer, sizeof buffer, "%d", test_relay);			
 							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 							disable_up_down_button = 1;
+							disable_left_right_button = 0;
 						}	
 												
 						//ssd1306_UpdateScreen();				
@@ -3396,14 +3405,17 @@ void Display_Task(void const * argument)
 						{
 							edit_mode_int(&slave_adr);
 							disable_up_down_button = 0;
+							disable_left_right_button = 1;
 						}
 						else 
 						{
 							snprintf(buffer, sizeof buffer, "%d", slave_adr);			
 							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 							disable_up_down_button = 1;
+							disable_left_right_button = 0;
 						}
 												
+						
 						//ssd1306_UpdateScreen();				
 					}	
 												
@@ -3428,12 +3440,14 @@ void Display_Task(void const * argument)
 						{
 							edit_mode_from_list(&baud_rate_uart_2, (uint32_t*)&baudrate_array);
 							disable_up_down_button = 0;
+							disable_left_right_button = 1;
 						}
 						else 
 						{
 							snprintf(buffer, sizeof buffer, "%.00f", baud_rate_uart_2);			
 							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 							disable_up_down_button = 1;
+							disable_left_right_button = 0;
 						}
 												
 						//ssd1306_UpdateScreen();				
@@ -3462,12 +3476,14 @@ void Display_Task(void const * argument)
 						{
 							edit_mode_int(&warming_up);
 							disable_up_down_button = 0;
+							disable_left_right_button = 1;
 						}
 						else 
 						{
 							snprintf(buffer, sizeof buffer, "%d", warming_up);			
 							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 							disable_up_down_button = 1;
+							disable_left_right_button = 0;
 						}
 												
 						//ssd1306_UpdateScreen();				
@@ -3719,6 +3735,7 @@ void Button_Task(void const * argument)
   {
 
 		//Лево	
+		if (disable_left_right_button == 0)
 		if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_11) == 0)
 		{
 			button_left ++;
@@ -3742,6 +3759,7 @@ void Button_Task(void const * argument)
 		}
 		
 		//Право
+		if (disable_left_right_button == 0)
 		if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 0)
 		{
 			button_right ++;		
