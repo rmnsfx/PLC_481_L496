@@ -6288,6 +6288,8 @@ void save_settings(void)
 			osDelay(2000);	
 	
 			menu_edit_mode = 0;
+			disable_left_right_button = 0;
+			disable_up_down_button = 0;
 	
 			//xSemaphoreGive( Mutex_Setting );
 			

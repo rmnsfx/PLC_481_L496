@@ -117,7 +117,6 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
-          <Name></Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -233,6 +232,21 @@
           <count>6</count>
           <WinNumber>2</WinNumber>
           <ItemText>warming_up,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>7</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>test_relay</ItemText>
+        </Ww>
+        <Ww>
+          <count>8</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>menu_edit_mode</ItemText>
+        </Ww>
+        <Ww>
+          <count>9</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>power_supply_voltage</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>
