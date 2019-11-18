@@ -179,8 +179,8 @@ float32_t pStates_main_low_4_20[8];
 arm_biquad_casd_df1_inst_f32 filter_main_high_4_20;
 float32_t pStates_main_high_4_20[8];
 
-int16_t settings[REG_COUNT]; //массив настроек 
-int16_t mirror_values[MIRROR_COUNT]; //зеркало
+int16_t settings[REG_COUNT]; //Settings array 
+int16_t mirror_values[MIRROR_COUNT]; 
 
 uint8_t button_state = 0;
 
@@ -220,7 +220,7 @@ float32_t rms_displacement_icp = 0.0;
 float32_t icp_coef_K = 0.0;
 float32_t icp_coef_B = 0.0;
 
-//Амплитуда и размах (ПИК, ПИК-ПИК)
+//Peak and Peak-peak 
 float32_t max_acceleration_icp = 0.0;
 float32_t min_acceleration_icp = 0.0;
 float32_t max_velocity_icp = 0.0;
@@ -229,8 +229,8 @@ float32_t max_displacement_icp = 0.0;
 float32_t min_displacement_icp = 0.0;
 
 //4-20
-float32_t current_4_20 = 0.0; //ток входного канала 4-20
-float32_t out_required_current = 0.0; //ток для выдачи в выходной канал 4-20
+float32_t current_4_20 = 0.0; 
+float32_t out_required_current = 0.0; 
 float32_t lo_warning_420 = 0.0;
 float32_t hi_warning_420 = 0.0;
 float32_t lo_emerg_420 = 0.0;
@@ -316,7 +316,7 @@ uint16_t warning_relay_counter = 0;
 uint16_t emerg_relay_counter = 0;
 uint16_t test_relay = 0;
 
-//Реле таймер на срабатывание
+
 uint8_t flag_delay_relay_1_4_20 = 0;
 uint8_t relay_permission_1_4_20 = 0;
 uint16_t timer_delay_relay_1_4_20 = 0;
@@ -331,25 +331,25 @@ uint8_t flag_delay_relay_2_icp = 0;
 uint8_t relay_permission_2_icp = 0;
 uint16_t timer_delay_relay_2_icp = 0;
 
-//Выход 4-20
+//Out 4-20
 uint8_t source_signal_out420 = 0;
 float32_t variable_for_out_4_20 = 0.0;	
 float32_t out_4_20_coef_K = 0.0;	
 float32_t out_4_20_coef_B = 0.0;	
 
-//Дискретный вход
+//DIN
 uint8_t bin_input_state = 0;
 
-//Общие
+//Common
 extern float32_t cpu_float;
-float32_t power_supply_voltage = 0.0;
+volatile float32_t power_supply_voltage = 0.0;
 uint16_t slave_adr = 0;	
 uint16_t warming_up = 0;
 uint8_t warming_flag = 1;
 float32_t power_supply_warning_lo = 0.0;
 float32_t power_supply_warning_hi = 0.0;
 
-//Кнопки
+
 uint8_t button_left = 0;
 uint8_t button_right = 0;
 uint8_t button_up = 0;
@@ -395,10 +395,10 @@ volatile int temp_var_2 = 0;
 
 extern uint16_t timer_485_counter;
 
-uint8_t temp_str = 0; //Скроллинг (промотка) строки в меню
+uint8_t temp_str = 0; //Scroll
 
-uint8_t menu_edit_mode = 0; //Режим редактирования
-uint8_t digit_rank = 0; //Разряд числа (для редактирования)
+uint8_t menu_edit_mode = 0; 
+uint8_t digit_rank = 0; 
 float32_t fractpart = 0.0;
 
 uint8_t temp_stat_1 = 0;
@@ -407,7 +407,7 @@ uint8_t horizont_menu_lenght = 0;
 uint8_t vertical_menu_lenght = 0;
 double intpart;	
 char buffer[64];
-uint8_t config_mode = 0; //Режим конфигурации контроллера
+uint8_t config_mode = 0; 
 
 volatile uint16_t number_of_items_in_the_menu = 0;
 const uint8_t items_menu_icp = 1;
@@ -432,7 +432,7 @@ uint8_t menu_edit_settings_mode = 0;
 float64_t integrator_summa_V = 0.0;
 float64_t integrator_summa_D = 0.0;
 
-//Счетчик оборотов (Turn Over Counter)
+//Turn Over Counter
 uint8_t old_turnover_front = 0;
 xQueueHandle queue_TOC;
 uint16_t queue_count_TOC;
@@ -457,9 +457,10 @@ uint8_t QUEUE_LENGHT = 32;
 
 uint8_t quit_relay_button = 0;
 
-volatile uint8_t disable_up_down_button = 0; //Флаг для запрета кнопок ввех и вниз
+volatile uint8_t disable_up_down_button = 0; //Flag denied up and down button
+volatile uint8_t disable_left_right_button = 0; 
 
-volatile uint8_t adc_bunch = 0; //Индекс половинки буфера АЦП
+volatile uint8_t adc_bunch = 0; //Index half buffer ADC
 
 volatile uint16_t bunch_count_1 = 0;
 volatile uint16_t bunch_count_2 = 0;
@@ -618,7 +619,7 @@ __weak void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTask
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-	//Время усреднения выборки (4с.=64, 2с.=32, 1с.=16)
+	//Time average sample (4s.=64, 2s.=32, 1s.=16)
 	if (filter_mode_icp == 0) QUEUE_LENGHT = 200;
 	else QUEUE_LENGHT = 200;
 	
@@ -638,7 +639,7 @@ void MX_FREERTOS_Init(void) {
 	Q_2peak_array_4_20 = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT_4_20 );
 	
 	
-	//Выделяем память под двумерный массив для усреднения (ЗСК)
+	//Allocation memory for average of 2d array 
 	for (int i=0; i < ZSK_REG_485_QTY; i++) 
 	{
 		zsk_average_array[i] = (float32_t*) pvPortMalloc( size_moving_average_ZSK * sizeof(float32_t) );		
@@ -865,7 +866,7 @@ void Acceleration_Task(void const * argument)
 
 		
 		
-		//Получаем данные
+		//Get data
 		if (adc_bunch == 1)
 		{			
 			for (uint16_t i=0, k=0; i < RAW_ADC_BUFFER_SIZE/2; i=i+2, k++)
@@ -890,27 +891,27 @@ void Acceleration_Task(void const * argument)
 		}
 	
 
-		//Усредняем постоянку ICP
+		//Average ICP
 		arm_rms_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&constant_voltage );
 				
 		
-		//Фильтр НЧ (lpf 25600)
+		//Lpf 25600
 		arm_biquad_cascade_df1_f32(&filter_main_low_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);										
 		//arm_biquad_cascade_df1_f32(&filter_main_low_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);			
 		
-		//Дециматор 25600 -> 6400
+		//Decimator 25600 -> 6400
 		for (uint16_t i=0, j=0; i < ADC_BUFFER_SIZE; i=i+4, j++) 
 		{
 			float_adc_value_ICP_64_1[j] = float_adc_value_ICP[i];
 		}		
 
-		//Фильтр ВЧ (hpf)
+		//Hpf
 		arm_biquad_cascade_df1_f32(&filter_main_high_icp, (float32_t*) &float_adc_value_ICP_64_1[0], (float32_t*) &float_adc_value_ICP_64_1[0], ADC_BUFFER_SIZE_SMALL);		
 		
-		//Фильтр НЧ (lpf 6400)
+		//Lpf 6400
 		arm_biquad_cascade_df1_f32(&filter_main_low_icp_2, (float32_t*) &float_adc_value_ICP_64_1[0], (float32_t*) &float_adc_value_ICP_64_1[0], ADC_BUFFER_SIZE_SMALL);										
 		
-		//СКЗ
+		//RMS
 		arm_rms_f32( (float32_t*)&float_adc_value_ICP_64_1[0], ADC_BUFFER_SIZE_SMALL, (float32_t*)&temp_rms_acceleration_icp );
 		arm_rms_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_mean_acceleration_4_20 );
 		
@@ -937,16 +938,16 @@ void Acceleration_Task(void const * argument)
 		
 		
 
-		//Детектор обрыва ICP (0 - нет обрыва, 1 - обрыв)
+		//Brake sensor detector ICP (0 - no, 1 - brake sensor)
 		if ( constant_voltage > 4000 ) break_sensor_icp = 1;
 		else break_sensor_icp = 0;
 
-		//Детектор обрыва 4-20 (0 - нет обрыва, 1 - обрыв)
+		//Brake sensor detector 4-20 (0 - no, 1 - brake sensor)
 		if ( (temp_mean_acceleration_4_20 * coef_ampl_420 + coef_offset_420) > break_level_4_20 ) break_sensor_420 = 0;
 		else break_sensor_420 = 1;
 		
 		
-		//Счетчик оборотов
+		
 		turnover_counter( &float_adc_value_4_20[0] );
 		
 
@@ -983,15 +984,15 @@ void Velocity_Task(void const * argument)
     xSemaphoreTake( Semaphore_Velocity, portMAX_DELAY );
 			
 		
-		//Интегратор
+		//Integrator
 		Integrate_V( (float32_t*)&float_adc_value_ICP_64_1[0], (float32_t*)&float_adc_value_ICP_64_1[0], ADC_BUFFER_SIZE_SMALL );		
 		
-		//Фильтр ВЧ (hpf)
+		//Hpf
 		arm_biquad_cascade_df1_f32(&filter_instance_highpass_1_icp, (float32_t*) &float_adc_value_ICP_64_1[0], (float32_t*) &float_adc_value_ICP_64_1[0], ADC_BUFFER_SIZE_SMALL);		
 
 		
 				
-		//СКЗ
+		//RMS
 		arm_rms_f32( (float32_t*)&float_adc_value_ICP_64_1[0], ADC_BUFFER_SIZE_SMALL, (float32_t*)&temp_rms_velocity_icp );
 		
 		//Max
@@ -1040,14 +1041,14 @@ void Displacement_Task(void const * argument)
     xSemaphoreTake( Semaphore_Displacement, portMAX_DELAY );				
 		
 		
-		//Интегратор			
+		//Integrator		
 		Integrate_D( (float32_t*)&float_adc_value_ICP_64_1[0], (float32_t*)&float_adc_value_ICP_64_1[0], ADC_BUFFER_SIZE_SMALL );		
 				
-		//Фильтр ВЧ
+		//HPF
 		arm_biquad_cascade_df1_f32(&filter_instance_highpass_2_icp, (float32_t*) &float_adc_value_ICP_64_1[0], (float32_t*) &float_adc_value_ICP_64_1[0], ADC_BUFFER_SIZE_SMALL);		
 		
 		
-		//СКЗ
+		//RMS
 		arm_rms_f32( (float32_t*)&float_adc_value_ICP_64_1[0], ADC_BUFFER_SIZE_SMALL, (float32_t*)&temp_rms_displacement_icp );								
 		
 		//Max
@@ -1135,10 +1136,10 @@ void Q_Average_A(void const * argument)
 					}					
 					arm_rms_f32( Q_A_mean_array_4_20, QUEUE_LENGHT_4_20, (float32_t*)&mean_4_20 );																
 						
-					//Усредненное значение тока
+					//Average
 					mean_4_20 = (float32_t) (mean_4_20 * coef_ampl_420 + coef_offset_420);
 
-					//Пересчет тока в пользовательский диапазон
+					//Calculate to user range
 					//calculated_value_4_20 =  (mean_4_20 - 4.0) * (16.0 / (up_user_range_4_20 - down_user_range_4_20));
 					calculated_value_4_20 =  down_user_range_4_20 + (up_user_range_4_20 - down_user_range_4_20) * ((mean_4_20 - 4.0) / (20.0 - 4.0));
 					
@@ -1193,7 +1194,7 @@ void Q_Average_V(void const * argument)
 						
 					rms_velocity_icp = (float32_t) (rms_velocity_icp * icp_coef_K + icp_coef_B);		
 
-					//Вычисление разницы времени между проходами
+					//Calculation of the difference between the passage
 					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
 					xTimeBefore = xTaskGetTickCount();	
 										
@@ -1276,7 +1277,7 @@ void Q_Average_D(void const * argument)
 void ADC_supply_voltage(void const * argument)
 {
   /* USER CODE BEGIN ADC_supply_voltage */
-	uint16_t supply_voltage = 0;
+	volatile uint16_t supply_voltage = 0;
   /* Infinite loop */
   for(;;)
   {
@@ -1316,17 +1317,17 @@ void Lights_Task(void const * argument)
 		else
 		{	
 
-			//Если реле не сработали и нет обрыва(по любому из каналов) и канал включен, то зажигаем зеленый
+			
 		
 			if (( break_sensor_icp == 1 && channel_ICP_ON == 1) || (break_sensor_420 == 1 && channel_4_20_ON == 1) || (break_sensor_485 == 1 && channel_485_ON == 1 )) 
 			{
-				//Горит красный
+				//Red
 				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET);
 				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
 			}
 			else 
 			{				
-				//Горит зеленый
+				//Green
 				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET);
 				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);	
 			}
@@ -1334,7 +1335,7 @@ void Lights_Task(void const * argument)
 						
 			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 1 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 0)
 			{								
-				//Мигает Синий 
+				//Blue
 				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET);
 				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
 				
@@ -1349,7 +1350,7 @@ void Lights_Task(void const * argument)
 			
 			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 1)
 			{				
-				//Мигает Красный 
+				//Red
 				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET);
 				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
 				
@@ -1387,32 +1388,32 @@ void DAC_Task(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-		//Диапазон
+		//Range
 		range_for_out = convert_hex_to_float(&settings[0], 94);
 		
-		//Номер регистра канала 485 для выхода 4-20
+		//Number reg 485 for out 4-20
 		reg_number_485 = settings[97];
 		
-		//Источник сигнала "калибровочный регистр"
+		//Source signal "calibration reg"
 		if (settings[89] == 0)
 		{
 			variable_for_out_4_20 = convert_hex_to_float(&settings[0], 62);					
 			out_required_current = variable_for_out_4_20;
 		}		
 		
-		//Источник сигнала ICP
+		//ICP
 		if (settings[89] == 1)
 		{						
 			out_required_current = rms_velocity_icp * (16.0 / range_for_out) + 4;		
 		}
 		
-		//Источник сигнала 4-20
+		//4-20
 		if (settings[89] == 2)
 		{
 			out_required_current = mean_4_20;
 		}
 		
-		//Источник сигнала 485
+		//485
 		if (settings[89] == 3)
 		{
 			//variable_485 = master_array[reg_number_485].master_value; 
@@ -1473,7 +1474,7 @@ void Display_Task(void const * argument)
 	ssd1306_Fill(1);
 	check_logo();
 	ssd1306_UpdateScreen();
-	osDelay( settings[109]/2); //Заливка половина времени прогрева
+	osDelay( settings[109]/2); //Fill half time warmup
 	
 
 	init_menu(1);
@@ -1538,7 +1539,7 @@ void Display_Task(void const * argument)
 						else horizont_menu_lenght = 4;	
 					}
 					
-					if (menu_index_pointer == 5) horizont_menu_lenght = 4; //Настройки
+					if (menu_index_pointer == 5) horizont_menu_lenght = 4; //Settings
 					if (menu_index_pointer == 6) horizont_menu_lenght = 3; //Информация
 					if (menu_index_pointer == 7) horizont_menu_lenght = 3; //Конфигурация
 					
@@ -3241,12 +3242,14 @@ void Display_Task(void const * argument)
 						{
 							edit_mode_int(&mode_relay);
 							disable_up_down_button = 0;
+							disable_left_right_button = 1;
 						}
 						else 
 						{
 							snprintf(buffer, sizeof buffer, "%d", mode_relay);			
 							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 							disable_up_down_button = 1;
+							disable_left_right_button = 0;
 						}
 												
 						//ssd1306_UpdateScreen();				
@@ -3274,12 +3277,14 @@ void Display_Task(void const * argument)
 						{
 							edit_mode_int(&delay_relay);
 							disable_up_down_button = 0;
+							disable_left_right_button = 1;
 						}
 						else 
 						{
 							snprintf(buffer, sizeof buffer, "%d", delay_relay);			
 							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 							disable_up_down_button = 1;
+							disable_left_right_button = 0;
 						}
 												
 						//ssd1306_UpdateScreen();				
@@ -3307,12 +3312,14 @@ void Display_Task(void const * argument)
 						{
 							edit_mode_int(&delay_relay_exit);
 							disable_up_down_button = 0;
+							disable_left_right_button = 1;
 						}
 						else 
 						{
 							snprintf(buffer, sizeof buffer, "%d", delay_relay_exit);			
 							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 							disable_up_down_button = 1;
+							disable_left_right_button = 0;
 						}
 			
 												
@@ -3339,12 +3346,14 @@ void Display_Task(void const * argument)
 						{
 							edit_mode_int(&test_relay);
 							disable_up_down_button = 0;
+							disable_left_right_button = 1;
 						}
 						else 
 						{
 							snprintf(buffer, sizeof buffer, "%d", test_relay);			
 							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 							disable_up_down_button = 1;
+							disable_left_right_button = 0;
 						}	
 												
 						//ssd1306_UpdateScreen();				
@@ -3396,14 +3405,17 @@ void Display_Task(void const * argument)
 						{
 							edit_mode_int(&slave_adr);
 							disable_up_down_button = 0;
+							disable_left_right_button = 1;
 						}
 						else 
 						{
 							snprintf(buffer, sizeof buffer, "%d", slave_adr);			
 							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 							disable_up_down_button = 1;
+							disable_left_right_button = 0;
 						}
 												
+						
 						//ssd1306_UpdateScreen();				
 					}	
 												
@@ -3428,12 +3440,14 @@ void Display_Task(void const * argument)
 						{
 							edit_mode_from_list(&baud_rate_uart_2, (uint32_t*)&baudrate_array);
 							disable_up_down_button = 0;
+							disable_left_right_button = 1;
 						}
 						else 
 						{
 							snprintf(buffer, sizeof buffer, "%.00f", baud_rate_uart_2);			
 							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 							disable_up_down_button = 1;
+							disable_left_right_button = 0;
 						}
 												
 						//ssd1306_UpdateScreen();				
@@ -3462,12 +3476,14 @@ void Display_Task(void const * argument)
 						{
 							edit_mode_int(&warming_up);
 							disable_up_down_button = 0;
+							disable_left_right_button = 1;
 						}
 						else 
 						{
 							snprintf(buffer, sizeof buffer, "%d", warming_up);			
 							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 							disable_up_down_button = 1;
+							disable_left_right_button = 0;
 						}
 												
 						//ssd1306_UpdateScreen();				
@@ -3719,6 +3735,7 @@ void Button_Task(void const * argument)
   {
 
 		//Лево	
+		if (disable_left_right_button == 0)
 		if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_11) == 0)
 		{
 			button_left ++;
@@ -3742,6 +3759,7 @@ void Button_Task(void const * argument)
 		}
 		
 		//Право
+		if (disable_left_right_button == 0)
 		if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 0)
 		{
 			button_right ++;		
@@ -5164,7 +5182,7 @@ void TriggerLogic_Task(void const * argument)
 			
 			settings[96] = 0;
 			
-			if (menu_horizontal == 0) //Если квитировали с помощью кнопки
+			if (menu_horizontal == 0) 
 			{
 				button_center_pressed_in_short = 0;
 				menu_edit_mode = 0;
@@ -5172,7 +5190,7 @@ void TriggerLogic_Task(void const * argument)
 			
 			quit_relay_button = 1;		
 
-			//Сброс битов в системе ЗСК
+			
 			trigger_485_ZSK = 0;
 			trigger_485_ZSK_percent = 0;
 			x_axis = 0;
@@ -5183,7 +5201,7 @@ void TriggerLogic_Task(void const * argument)
 			
 			write_reg_flash(104, trigger_485_ZSK, 1);
 			
-			//Чтоб пересчитывались проценты снова, при сбросе
+			
 			for(int i = 0; i < ZSK_REG_485_QTY; i++) 
 			{				
 				ZSK_trigger_array_previous[i] = 0;
@@ -5225,7 +5243,7 @@ void Relay_1_Task(void const * argument)
 		{			
 			if (state_warning_relay == 1)
 			{
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);	//Замкнуто			
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);	
 			}
 				
 			if (prev_state_relay == 0) warning_relay_counter++;
@@ -5240,7 +5258,7 @@ void Relay_1_Task(void const * argument)
 					flag_for_delay_relay_exit = 0; 
 			}			
 			
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET); //Разомкнуто
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET); 
 		}
 		
 		prev_state_relay = state_warning_relay;
@@ -5271,7 +5289,7 @@ void Relay_2_Task(void const * argument)
 			
 			if (state_emerg_relay == 1)
 			{
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET); //Разомкнуто		
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
 			}
 
 			if (prev_state_relay == 0) 
@@ -5289,7 +5307,7 @@ void Relay_2_Task(void const * argument)
 			}
 			
 			
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET); //Замкнуто
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
 		}   
 		
 		
@@ -5333,8 +5351,8 @@ void HART_Receive_Task(void const * argument)
 		if (HART_receiveBuffer[0] == hart_slave_address)
 		{		
 				
-				func_number = HART_receiveBuffer[1]; //номер функции	
-				byte_qty = HART_receiveBuffer[2];//кол-во байт
+				func_number = HART_receiveBuffer[1]; 
+				byte_qty = HART_receiveBuffer[2];
 			
 			  recieve_calculated_crc = crc16(HART_receiveBuffer, 6);
 				recieve_actual_crc = (HART_receiveBuffer[7] << 8) + HART_receiveBuffer[6];
@@ -5496,12 +5514,12 @@ void TBUS_Modbus_Transmit_Task(void const * argument)
 						
 						if (TBUS_receiveBuffer[1] == 0x03 || TBUS_receiveBuffer[1] == 0x04) //Holding Register (FC=03) or Input Register (FC=04)
 						{		
-									if (adr_of_registers < 125) //если кол-во регистров больше 125 (255 байт макс.), опрос идет несколькими запросами 
+									if (adr_of_registers < 125) 
 									{							
 											for (volatile uint16_t i=adr_of_registers, j=0; i < outer_register; i++, j++)
 											{
-												TBUS_transmitBuffer[j*2+3] = settings[i] >> 8; //значение регистра Lo 		
-												TBUS_transmitBuffer[j*2+4] = settings[i] & 0x00FF; //значение регистра Hi		
+												TBUS_transmitBuffer[j*2+3] = settings[i] >> 8;
+												TBUS_transmitBuffer[j*2+4] = settings[i] & 0x00FF;
 											}
 									
 											crc = crc16(TBUS_transmitBuffer, count_registers*2+3);				
@@ -5518,8 +5536,8 @@ void TBUS_Modbus_Transmit_Task(void const * argument)
 											{
 													for (uint16_t i=0, j=0; i < count_registers; i++, j++)
 													{
-														TBUS_transmitBuffer[j*2+3] = settings[adr_of_registers + i] >> 8; //значение регистра Lo 		
-														TBUS_transmitBuffer[j*2+4] = settings[adr_of_registers + i] & 0x00FF; //значение регистра Hi		
+														TBUS_transmitBuffer[j*2+3] = settings[adr_of_registers + i] >> 8; 
+														TBUS_transmitBuffer[j*2+4] = settings[adr_of_registers + i] & 0x00FF;
 													}
 											}
 											
@@ -5527,8 +5545,8 @@ void TBUS_Modbus_Transmit_Task(void const * argument)
 											{
 													for (uint16_t i=0, j=0; i < MIRROR_COUNT; i++, j++)
 													{
-														TBUS_transmitBuffer[j*2+3] = mirror_values[(adr_of_registers - 999) +  i] >> 8; //значение регистра Lo 		
-														TBUS_transmitBuffer[j*2+4] = mirror_values[(adr_of_registers - 999) +  i] & 0x00FF; //значение регистра Hi		
+														TBUS_transmitBuffer[j*2+3] = mirror_values[(adr_of_registers - 999) +  i] >> 8; 
+														TBUS_transmitBuffer[j*2+4] = mirror_values[(adr_of_registers - 999) +  i] & 0x00FF; 
 													}
 											}
 											
@@ -5536,8 +5554,8 @@ void TBUS_Modbus_Transmit_Task(void const * argument)
 											{
 													for (uint16_t i=0, j=0; i < MIRROR_COUNT; i++, j++)
 													{
-														TBUS_transmitBuffer[j*2+3] = 0; //значение регистра Lo 		
-														TBUS_transmitBuffer[j*2+4] = 0; //значение регистра Hi		
+														TBUS_transmitBuffer[j*2+3] = 0; //Lo 		
+														TBUS_transmitBuffer[j*2+4] = 0; //Hi		
 													}
 											}
 									
@@ -5556,7 +5574,7 @@ void TBUS_Modbus_Transmit_Task(void const * argument)
 									{
 										settings[adr_of_registers] = (TBUS_receiveBuffer[4] << 8) + TBUS_receiveBuffer[5]; 										
 									}
-									else if (settings[107] == -7035) //Если изменяем регистры, то надо снять блокировку (Рег.108 = 0xE485)
+									else if (settings[107] == -7035) 
 									{
 										settings[adr_of_registers] = (TBUS_receiveBuffer[4] << 8) + TBUS_receiveBuffer[5]; 										
 									}
@@ -5584,7 +5602,7 @@ void TBUS_Modbus_Transmit_Task(void const * argument)
 										settings[adr_of_registers] = (TBUS_receiveBuffer[7] << 8) + TBUS_receiveBuffer[8]; 										
 										settings[adr_of_registers+1] = (TBUS_receiveBuffer[9] << 8) + TBUS_receiveBuffer[10];
 									}
-									else if (settings[107] == -7035) //Если изменяем регистры, то надо снять блокировку (Рег.108 = 0xE485)
+									else if (settings[107] == -7035) 
 									{
 										for (uint16_t i=adr_of_registers, j=0; i < outer_register; i++, j=j+2)
 										{											
@@ -5594,10 +5612,10 @@ void TBUS_Modbus_Transmit_Task(void const * argument)
 									}										
 									
 
-									TBUS_transmitBuffer[2] = TBUS_receiveBuffer[2];//адрес первого регистра
+									TBUS_transmitBuffer[2] = TBUS_receiveBuffer[2];
 									TBUS_transmitBuffer[3] = TBUS_receiveBuffer[3];
 							
-									TBUS_transmitBuffer[4] = TBUS_receiveBuffer[4];//кол-во регистров	
+									TBUS_transmitBuffer[4] = TBUS_receiveBuffer[4];
 									TBUS_transmitBuffer[5] = TBUS_receiveBuffer[5];
 								
 							
@@ -5829,7 +5847,7 @@ void FilterInit(void)
 //				};    				
 				
 
-				//Баттерворт 3п 1300 Гц (25600)	
+				//Butterwoth, 3ord 1300 Hz (25600)	
 				static float32_t coef_main_low_gain_25600[] = {					
 					1*0.021814503924926908,  2*0.021814503924926908,  1*0.021814503924926908,  1.6415882340487031,  -0.72884624974841106,        
 					1*0.13860037351789706,  1*0.13860037351789706,  0*0.13860037351789706,  0.72279925296420588,  0                                                    
@@ -5854,7 +5872,7 @@ void FilterInit(void)
 //				1*0.37475651990434722,  1*0.37475651990434722,  0*0.37475651990434722,  0.25048696019130551,  0                          
 //			};
 
-				//Баттерворт 3п 1100Гц (6400)
+				//Butterwoth, 3ord 1100Hz (6400)
 				static float32_t coef_main_low_gain[] = {								
 					1*0.21112927559799433,  2*0.21112927559799433,  1*0.21112927559799433,  0.52352831655332599, -0.36804541894530324,        
 					1*0.400543816310171,  1*0.400543816310171,  0*0.400543816310171,  0.19891236737965803,  0                          
@@ -5864,19 +5882,19 @@ void FilterInit(void)
                                           
   
                                          
-			//Баттерворт, 3п, 1.9Гц (6400)
+			//Butterwoth, 3ord, 1.9Hz (6400)
 			static float32_t coef_main_highpass_2Hz_gain[] = {			
 				1*0.99906734022106236,  -2*0.99906734022106236,  1*0.99906734022106236,  1.9981329423531335, -0.99813641853111601,      
 				1*0.99906820845578981,  -1*0.99906820845578981,  0*0.99906820845578981,  0.99813641691157962,  0                          
 			}; 
                                                
-			//Баттерворт, 3п, 3.7Гц (6400)
+			//Butterwoth, 3ord, 3.7Hz (6400)
 			static float32_t coef_main_highpass_5Hz_gain[] = {                                                 		                                                           
 				1*0.99818377073042208,  -2*0.99818377073042208,  1*0.99818377073042208,  1.996360956022307, -0.99637412689938132,       
 				1*0.99818705748017988,  -1*0.99818705748017988,  0*0.99818705748017988, 0.99637411496035977,  0                         
 			};
 			
-			//Баттерворт, 3п, 7.5Гц (6400)
+			//Butterwoth, 3ord, 7.5Hz (6400)
 			static float32_t coef_main_highpass_10Hz_gain[] = {		             						
 				1*0.99631847919207916,  -2*0.99631847919207916,  1*0.99631847919207916,  1.9926099502594936, -0.99266396650882305,        
 				1*0.9963319337206159,  -1*0.9963319337206159,  0*0.9963319337206159,  0.9926638674412317,  0                            
@@ -5994,7 +6012,7 @@ void string_scroll_with_number(char* msg, uint8_t len, uint8_t number)
 
 void edit_mode(float32_t *var)
 {
-	//Целая часть
+	
 	if (temp_stat_1 == 0 && digit_rank == 0) 
 	{									
 		snprintf(buffer, sizeof buffer, "%.01f", *var);									
@@ -6022,8 +6040,8 @@ void edit_mode(float32_t *var)
 		ssd1306_WriteString(buffer,font_8x14,1);
 	}
 						
-	
-	//Изменяем значение
+
+
 	if (button_up_pressed_in == 1 && digit_rank == 0) 
 	{ 
 			*var+=1.0; 
@@ -6048,7 +6066,7 @@ void edit_mode(float32_t *var)
 			button_down_pressed_in = 0; 
 	};
 	
-	//Округляем до сотых для корректного отображения в меню
+
 	*var = roundf(*var * 100) / 100;
 }	
 
@@ -6066,7 +6084,7 @@ void edit_mode_int8(uint8_t *var)
 		ssd1306_WriteString(buffer,font_8x14, 0);								
 	}															
 	
-	//Изменяем значение
+
 	if (button_up_pressed_in == 1 && digit_rank == 0) 
 	{ 
 			*var+=1; 
@@ -6095,7 +6113,7 @@ void edit_mode_int(int16_t *var)
 		ssd1306_WriteString(buffer,font_8x14, 0);								
 	}															
 	
-	//Изменяем значение
+
 	if (button_up_pressed_in == 1 && digit_rank == 0) 
 	{ 
 			*var+=1; 
@@ -6113,7 +6131,7 @@ void edit_mode_int(int16_t *var)
 void edit_mode_from_list(float32_t *var, uint32_t* list)
 {
 	
-	//Целая часть
+	//The whole part
 	if (temp_stat_1 == 0) 
 	{									
 		snprintf(buffer, sizeof buffer, "%d", (int)*var);									
@@ -6126,7 +6144,7 @@ void edit_mode_from_list(float32_t *var, uint32_t* list)
 		ssd1306_WriteString(buffer,font_8x14, 0);								
 	}															
 		
-	//Изменяем значение
+	//Edit values
 	if (button_up_pressed_in == 1) 
 	{ 
 			if (iter < 15) *var=list[iter++];					
@@ -6143,7 +6161,7 @@ void edit_mode_from_list(float32_t *var, uint32_t* list)
 
 }	
 
-void init_menu(uint8_t where_from) //Иниц. меню (1 - конфиг, т.е. зажата кнопка при вкл.)
+void init_menu(uint8_t where_from) //Init menu (1 - config)
 {	
 	number_of_items_in_the_menu = 0;
 	menu_horizontal = 0;
@@ -6169,20 +6187,20 @@ void init_menu(uint8_t where_from) //Иниц. меню (1 - конфиг, т.е. зажата кнопка 
 	}
 	
 	menu_index_array[number_of_items_in_the_menu] = items_menu_relay;
-	number_of_items_in_the_menu ++; //Реле
+	number_of_items_in_the_menu ++; //Relay
 	
 	menu_index_array[number_of_items_in_the_menu] = items_menu_common;
-	number_of_items_in_the_menu ++; //Основные настройки
+	number_of_items_in_the_menu ++; //Common settings
  			
 	menu_index_array[number_of_items_in_the_menu] = items_menu_info;
-	number_of_items_in_the_menu ++; //Информация
+	number_of_items_in_the_menu ++; //Inform
 	
 	
 	if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_7) == 0 && where_from == 1) 
 	{
 		config_mode = 1;	
 		menu_index_array[number_of_items_in_the_menu] = items_menu_config;
-		number_of_items_in_the_menu++; //Включаем доп. меню для конфигурации								
+		number_of_items_in_the_menu++; //Additional menu
 	}	
 	
 	menu_index_pointer = menu_index_array[0];	
@@ -6300,7 +6318,7 @@ void turnover_counter(float32_t* input_array)
 					turnover_front = 0;
 				}		
 			
-				//Детектор переднего фронта	(+)
+				//leading edge detector	(+)
 				if (turnover_front == 1 && old_turnover_front == 0) 
 				{			
 					difference_points_counter = big_points_counter - small_points_counter;
@@ -6324,7 +6342,7 @@ void turnover_counter(float32_t* input_array)
 					turnover_front = 0;
 				}		
 			
-				//Детектор переднего фронта	(-)
+				//leading edge detector	(-)
 				if (turnover_front == 1 && old_turnover_front == 0) 
 				{			
 					difference_points_counter = big_points_counter - small_points_counter;

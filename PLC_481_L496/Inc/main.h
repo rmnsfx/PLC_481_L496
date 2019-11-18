@@ -125,7 +125,8 @@
 #define COEF_TRANSFORM_4_20 (20.0 / 4095.0)
 #define break_level_4_20 3.7
 
-#define COEF_TRANSFORM_SUPPLY (24.0 / 4095.0) * 1.412
+//(Опорное напряжение / 12 бит АЦП) * Кванты * Делитель
+#define COEF_TRANSFORM_SUPPLY (3.3 / 4095.0) * 10
 
 //#define REG_COUNT 744//335 //
 #define PAGE 100 //Осн. 0x8032000, резерв 0x8032800 
@@ -136,7 +137,7 @@
 
 #define TIME_BREAK_SENSOR_485 15 //сек.
 
-#define VERSION 5.39
+#define VERSION 5.40
 
 #define REG_485_QTY 40
 #define REG_485_START_ADDR 144

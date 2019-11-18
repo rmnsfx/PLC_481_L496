@@ -738,11 +738,15 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		
 		
 		//Таймер прогрева (мс.)
-		if (warm_timer == warming_up) 
+		if (warm_timer >= warming_up) 
 		{
 			warming_flag = 0;
+			warm_timer = 0;
 		}
-		else warm_timer += 100;		
+		else 
+		{
+			warm_timer += 100;		
+		}
 		
   }
   /* USER CODE END Callback 1 */
