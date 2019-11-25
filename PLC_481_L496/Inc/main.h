@@ -136,7 +136,11 @@
 
 #define TIME_BREAK_SENSOR_485 15 //сек.
 
+<<<<<<< HEAD
 #define VERSION 5.26
+=======
+#define VERSION 5.41
+>>>>>>> 1095ba1... v5.41 zsk no fix emergency value in memory when triggered
 
 #define REG_485_QTY 40
 #define REG_485_START_ADDR 144

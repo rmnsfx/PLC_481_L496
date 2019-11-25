@@ -480,7 +480,7 @@ volatile uint8_t status2 = 0;
 volatile uint8_t status3 = 0;
 
 uint16_t size_moving_average_ZSK;
-float32_t* zsk_average_array[ZSK_REG_485_QTY]; 
+volatile float32_t* zsk_average_array[ZSK_REG_485_QTY]; 
 float32_t average_result = 0.0;
 
 //volatile uint16_t reg_lost_packet = 0;
@@ -4458,6 +4458,7 @@ void Data_Storage_Task(void const * argument)
 		for (uint16_t i = 0; i < REG_485_QTY; i++)
 		{			
 						
+<<<<<<< HEAD
 				if (channel_485_ON == 2) //Специальный режим работы для системы ЗСК	
 				if(MOVING_AVERAGE == 1) //Расчитываем скользящее среднее и перезаписываем значение с учетом усреднения (ЗСК)		
 				if (i < 15) //Усредняем только вибропараметры
@@ -4481,6 +4482,32 @@ void Data_Storage_Task(void const * argument)
 						
 						master_array[i].master_value = average_result;
 				}			
+=======
+//				if (warming_flag == 0)
+//				if (channel_485_ON == 2) //Специальный режим работы для системы ЗСК	
+//				if(MOVING_AVERAGE == 1) //Расчитываем скользящее среднее и перезаписываем значение с учетом усреднения (ЗСК)		
+//				if (i < 15) //Усредняем только вибропараметры
+//				{												
+//						average_result = 0.0;																	
+//					
+//						//Сдвигаем массив для записи нового элемента
+//						for (int y = 1; y < size_moving_average_ZSK; y++)				
+//						{
+//								zsk_average_array[i][y-1] = zsk_average_array[i][y];
+//						}						
+//						
+//						//Записываем новое значение 						
+//						zsk_average_array[i][size_moving_average_ZSK - 1] = master_array[i].master_value;
+//						
+//						//Расчитываем среднее
+//						for (int j = 0; j < size_moving_average_ZSK; j++)				
+//						{
+//								average_result += zsk_average_array[i][j] / size_moving_average_ZSK;							
+//						}
+//						
+//						master_array[i].master_value = average_result;
+//				}			
+>>>>>>> 1095ba1... v5.41 zsk no fix emergency value in memory when triggered
 			
 			
 				master_array[i].master_on = settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 0];
@@ -4839,7 +4866,52 @@ void TriggerLogic_Task(void const * argument)
 				
 				if (channel_485_ON == 2) //Специальный режим работы для системы ЗСК
 				{
+<<<<<<< HEAD
 					
+=======
+					
+					
+					
+						for (uint16_t i = 0; i < REG_485_QTY; i++)
+						{			
+										
+								if (warming_flag == 0)								
+								if(MOVING_AVERAGE == 1) //Расчитываем скользящее среднее и перезаписываем значение с учетом усреднения (ЗСК)		
+								if (i < 15) //Усредняем только вибропараметры
+								{												
+										average_result = 0.0;																	
+									
+										//Сдвигаем массив для записи нового элемента
+										for (int y = 1; y < size_moving_average_ZSK; y++)				
+										{
+												zsk_average_array[i][y-1] = zsk_average_array[i][y];
+										}						
+										
+										//Записываем новое значение 						
+										zsk_average_array[i][size_moving_average_ZSK - 1] = master_array[i].master_value / size_moving_average_ZSK;
+										
+										//Расчитываем среднее
+										for (int j = 0; j < size_moving_average_ZSK; j++)				
+										{
+												average_result += zsk_average_array[i][j] ;							
+										}
+										
+										master_array[i].master_value = average_result;
+								}
+						}						
+					
+					
+						//Заморозка битов состояния, если была сработка 						
+						//if( (state_emerg_relay == 0) && (trigger_485_ZSK_percent < 99) && (trigger_485_ZSK < 0xC00) )												
+						{
+							trigger_485_ZSK = 0;
+							trigger_485_ZSK_percent = 0;
+						}
+					
+
+					
+						if (state_emerg_relay == 0)
+>>>>>>> 1095ba1... v5.41 zsk no fix emergency value in memory when triggered
 						for (uint8_t i = 0; i < ZSK_REG_485_QTY; i++)
 						{
 								if (master_array[i].master_on == 1)
@@ -5051,16 +5123,42 @@ void TriggerLogic_Task(void const * argument)
 						if (trigger_485_ZSK_percent < 0)  trigger_485_ZSK_percent = 0;
 						else if (trigger_485_ZSK_percent > 100) trigger_485_ZSK_percent = 100;
 						
+<<<<<<< HEAD
 						if ( (x_axis & y_axis) ||  (x_axis & z_axis) || (y_axis & z_axis) )	trigger_485_ZSK_percent = 100;
 						
 						
 						//Если было событие, сохраняем регистр состояния на flash
 						if (trigger_485_ZSK_percent_prev != trigger_485_ZSK_percent) 
+=======
+						if ((settings[34] == 1) && (warming_flag == 0))
+>>>>>>> 1095ba1... v5.41 zsk no fix emergency value in memory when triggered
 						{
-							write_reg_flash(104, trigger_485_ZSK, 1);
-							trigger_485_ZSK_percent_prev = trigger_485_ZSK_percent;
+							//Если было событие, сохраняем регистр состояния на flash						
+							if ( (trigger_485_ZSK_percent_prev != trigger_485_ZSK_percent) && (trigger_485_ZSK_percent >= 100) && (warming_flag == 0) )						
+							{
+								write_reg_flash(104, trigger_485_ZSK, 1);								
+							}							
 						}
+<<<<<<< HEAD
 						else trigger_485_ZSK_percent_prev = trigger_485_ZSK_percent;
+=======
+						
+						trigger_485_ZSK_percent_prev = trigger_485_ZSK_percent;
+							
+						//Фиксируем текущее состояние, для того чтоб не было одновременных нескольких срабатываний при подъеме бита
+						//memcpy(ZSK_trigger_array_previous, ZSK_trigger_array, sizeof(ZSK_trigger_array));
+					
+						
+						
+						
+						
+						//Обрыв датчика
+						if(break_sensor_485 == 1) 
+						{
+							state_emerg_relay = 1;							
+							xSemaphoreGive( Semaphore_Relay_2 );							
+						}
+>>>>>>> 1095ba1... v5.41 zsk no fix emergency value in memory when triggered
 						
 						//Фиксируем текущее состояние, для того чтоб не было одновременных нескольких срабатываний при подъеме бита
 						memcpy(ZSK_trigger_array_previous, ZSK_trigger_array, sizeof(ZSK_trigger_array));

@@ -202,22 +202,43 @@
         <Ww>
           <count>2</count>
           <WinNumber>2</WinNumber>
+<<<<<<< HEAD
           <ItemText>settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 20]</ItemText>
+=======
+          <ItemText>master_array[6],0x0A</ItemText>
+>>>>>>> 1095ba1... v5.41 zsk no fix emergency value in memory when triggered
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>2</WinNumber>
+<<<<<<< HEAD
           <ItemText>settings</ItemText>
+=======
+          <ItemText>state_warning_relay</ItemText>
+>>>>>>> 1095ba1... v5.41 zsk no fix emergency value in memory when triggered
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>2</WinNumber>
+<<<<<<< HEAD
           <ItemText>master_array[0]</ItemText>
+=======
+          <ItemText>average_result</ItemText>
+>>>>>>> 1095ba1... v5.41 zsk no fix emergency value in memory when triggered
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>2</WinNumber>
+<<<<<<< HEAD
           <ItemText>master_receive_buffer</ItemText>
+=======
+          <ItemText>master_array[6].master_value</ItemText>
+        </Ww>
+        <Ww>
+          <count>6</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>zsk_average_array[6]</ItemText>
+>>>>>>> 1095ba1... v5.41 zsk no fix emergency value in memory when triggered
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>
