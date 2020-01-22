@@ -3,7 +3,7 @@
 <title>Static Call Graph - [PLC_481_L496\PLC_481_L496.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image PLC_481_L496\PLC_481_L496.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Mon Nov 25 14:40:24 2019
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Wed Jan 22 16:40:04 2020
 <BR><P>
 <H3>Maximum Stack Usage =        704 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -766,7 +766,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[74]"></a>Acceleration_Task</STRONG> (Thumb, 574 bytes, Stack size 40 bytes, freertos.o(i.Acceleration_Task))
+<P><STRONG><a name="[74]"></a>Acceleration_Task</STRONG> (Thumb, 570 bytes, Stack size 40 bytes, freertos.o(i.Acceleration_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = Acceleration_Task &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_rms_f32
@@ -871,7 +871,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l496xx.o(RESET)
 </UL>
-<P><STRONG><a name="[83]"></a>Data_Storage_Task</STRONG> (Thumb, 1488 bytes, Stack size 16 bytes, freertos.o(i.Data_Storage_Task))
+<P><STRONG><a name="[83]"></a>Data_Storage_Task</STRONG> (Thumb, 1482 bytes, Stack size 16 bytes, freertos.o(i.Data_Storage_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 160<LI>Call Chain = Data_Storage_Task &rArr; write_registers_to_flash &rArr; write_flash &rArr; HAL_FLASH_Program &rArr; FLASH_WaitForLastOperation
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_registers_to_flash
@@ -903,7 +903,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[7d]"></a>Display_Task</STRONG> (Thumb, 14198 bytes, Stack size 48 bytes, freertos.o(i.Display_Task))
+<P><STRONG><a name="[7d]"></a>Display_Task</STRONG> (Thumb, 14160 bytes, Stack size 48 bytes, freertos.o(i.Display_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 224<LI>Call Chain = Display_Task &rArr; save_settings &rArr; write_registers_to_flash &rArr; write_flash &rArr; HAL_FLASH_Program &rArr; FLASH_WaitForLastOperation
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
@@ -1904,7 +1904,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[81]"></a>Master_Modbus_Receive</STRONG> (Thumb, 612 bytes, Stack size 24 bytes, freertos.o(i.Master_Modbus_Receive))
+<P><STRONG><a name="[81]"></a>Master_Modbus_Receive</STRONG> (Thumb, 602 bytes, Stack size 24 bytes, freertos.o(i.Master_Modbus_Receive))
 <BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = Master_Modbus_Receive &rArr; xQueueSemaphoreTake &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;crc16
@@ -1922,7 +1922,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[82]"></a>Master_Modbus_Transmit</STRONG> (Thumb, 338 bytes, Stack size 16 bytes, freertos.o(i.Master_Modbus_Transmit))
+<P><STRONG><a name="[82]"></a>Master_Modbus_Transmit</STRONG> (Thumb, 330 bytes, Stack size 16 bytes, freertos.o(i.Master_Modbus_Transmit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = Master_Modbus_Transmit &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;crc16
@@ -1958,7 +1958,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[80]"></a>Modbus_Transmit_Task</STRONG> (Thumb, 756 bytes, Stack size 48 bytes, freertos.o(i.Modbus_Transmit_Task))
+<P><STRONG><a name="[80]"></a>Modbus_Transmit_Task</STRONG> (Thumb, 752 bytes, Stack size 48 bytes, freertos.o(i.Modbus_Transmit_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = Modbus_Transmit_Task &rArr; xQueueSemaphoreTake &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;crc16
@@ -1970,7 +1970,7 @@ Global Symbols
 <P><STRONG><a name="[1]"></a>NMI_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32l4xx_it.o(i.NMI_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l496xx.o(RESET)
 </UL>
-<P><STRONG><a name="[77]"></a>Q_Average_A</STRONG> (Thumb, 446 bytes, Stack size 24 bytes, freertos.o(i.Q_Average_A))
+<P><STRONG><a name="[77]"></a>Q_Average_A</STRONG> (Thumb, 452 bytes, Stack size 24 bytes, freertos.o(i.Q_Average_A))
 <BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = Q_Average_A &rArr; xQueueReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_rms_f32
@@ -2129,7 +2129,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StartDefaultTask
 </UL>
 
-<P><STRONG><a name="[84]"></a>TriggerLogic_Task</STRONG> (Thumb, 2864 bytes, Stack size 8 bytes, freertos.o(i.TriggerLogic_Task))
+<P><STRONG><a name="[84]"></a>TriggerLogic_Task</STRONG> (Thumb, 2838 bytes, Stack size 8 bytes, freertos.o(i.TriggerLogic_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = TriggerLogic_Task &rArr; write_reg_flash &rArr; HAL_FLASH_Program &rArr; FLASH_WaitForLastOperation
 </UL>
 <BR>[Calls]<UL><LI><a href="#[16c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_reg_flash
@@ -2204,7 +2204,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l496xx.o(RESET)
 </UL>
-<P><STRONG><a name="[8b]"></a>Update_Bootloader_Task</STRONG> (Thumb, 462 bytes, Stack size 24 bytes, freertos.o(i.Update_Bootloader_Task))
+<P><STRONG><a name="[8b]"></a>Update_Bootloader_Task</STRONG> (Thumb, 434 bytes, Stack size 24 bytes, freertos.o(i.Update_Bootloader_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = Update_Bootloader_Task &rArr; xQueueSemaphoreTake &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_FLASH_Unlock
@@ -2437,7 +2437,7 @@ Global Symbols
 <LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskSwitchContext
 </UL>
 
-<P><STRONG><a name="[c7]"></a>init_menu</STRONG> (Thumb, 224 bytes, Stack size 24 bytes, freertos.o(i.init_menu))
+<P><STRONG><a name="[c7]"></a>init_menu</STRONG> (Thumb, 176 bytes, Stack size 24 bytes, freertos.o(i.init_menu))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = init_menu
 </UL>
 <BR>[Calls]<UL><LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_ReadPin
@@ -2721,8 +2721,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Task
 </UL>
 
-<P><STRONG><a name="[bc]"></a>turnover_counter</STRONG> (Thumb, 378 bytes, Stack size 40 bytes, freertos.o(i.turnover_counter))
-<BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = turnover_counter &rArr; __aeabi_ul2f &rArr; _float_epilogue
+<P><STRONG><a name="[bc]"></a>turnover_counter</STRONG> (Thumb, 342 bytes, Stack size 56 bytes, freertos.o(i.turnover_counter))
+<BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = turnover_counter &rArr; __aeabi_ul2f &rArr; _float_epilogue
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_mean_f32
 <LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ul2f

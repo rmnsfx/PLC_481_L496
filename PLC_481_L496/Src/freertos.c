@@ -181,6 +181,7 @@ float32_t pStates_main_high_4_20[8];
 
 int16_t settings[REG_COUNT]; //Settings array 
 int16_t mirror_values[MIRROR_COUNT]; 
+volatile int16_t bit_field[BIT_FIELD_COUNT];
 
 uint8_t button_state = 0;
 
@@ -300,9 +301,9 @@ uint16_t trigger_485_ZSK_percent_prev = 0;
 uint64_t ZSK_trigger_array[ZSK_REG_485_QTY];
 uint64_t ZSK_trigger_array_previous[ZSK_REG_485_QTY];
 
-volatile int x_axis = 0;
-volatile int y_axis = 0; 
-volatile int z_axis = 0;
+int16_t x_axis = 0;
+int16_t y_axis = 0; 
+int16_t z_axis = 0;
 
 //Реле
 uint8_t state_emerg_relay = 0;
@@ -390,8 +391,8 @@ uint16_t channel_ICP_ON = 0;
 uint16_t channel_4_20_ON = 0;
 uint16_t channel_485_ON = 0;
 
-volatile int temp_var_1 = 0;
-volatile int temp_var_2 = 0;
+int temp_var_1 = 0;
+int temp_var_2 = 0;
 
 extern uint16_t timer_485_counter;
 
@@ -409,7 +410,7 @@ double intpart;
 char buffer[64];
 uint8_t config_mode = 0; 
 
-volatile uint16_t number_of_items_in_the_menu = 0;
+uint16_t number_of_items_in_the_menu = 0;
 const uint8_t items_menu_icp = 1;
 const uint8_t items_menu_4_20 = 2; 
 const uint8_t items_menu_485 = 3;
@@ -436,17 +437,17 @@ float64_t integrator_summa_D = 0.0;
 uint8_t old_turnover_front = 0;
 xQueueHandle queue_TOC;
 uint16_t queue_count_TOC;
-volatile float32_t turnover_count_1s = 0.0;		
-volatile float32_t turnover_count_60s = 0.0;
-volatile uint16_t pass_count = 0;
-volatile uint8_t turnover_front = 0;	
-volatile uint64_t big_points_counter = 0;
-volatile uint64_t small_points_counter = 0;
-volatile uint64_t difference_points_counter = 0;
-volatile float32_t common_level_TOC = 0.0;
-volatile float32_t mean_level_TOC = 0.0;
-volatile float32_t level_summa_TOC = 0.0;
-volatile float32_t turnover_summa[TOC_QUEUE_LENGHT];
+float32_t turnover_count_1s = 0.0;		
+float32_t turnover_count_60s = 0.0;
+uint16_t pass_count = 0;
+uint8_t turnover_front = 0;	
+uint64_t big_points_counter = 0;
+uint64_t small_points_counter = 0;
+uint64_t difference_points_counter = 0;
+float32_t common_level_TOC = 0.0;
+float32_t mean_level_TOC = 0.0;
+float32_t level_summa_TOC = 0.0;
+float32_t turnover_summa[TOC_QUEUE_LENGHT];
 uint16_t summa_iter = 0;
 uint16_t impulse_sign = 0;
 uint16_t hysteresis_TOC = 0;
@@ -457,33 +458,33 @@ uint8_t QUEUE_LENGHT = 32;
 
 uint8_t quit_relay_button = 0;
 
-volatile uint8_t disable_up_down_button = 0; //Flag denied up and down button
-volatile uint8_t disable_left_right_button = 0; 
+uint8_t disable_up_down_button = 0; //Flag denied up and down button
+uint8_t disable_left_right_button = 0; 
 
-volatile uint8_t adc_bunch = 0; //Index half buffer ADC
+uint8_t adc_bunch = 0; //Index half buffer ADC
 
-volatile uint16_t bunch_count_1 = 0;
-volatile uint16_t bunch_count_2 = 0;
+uint16_t bunch_count_1 = 0;
+uint16_t bunch_count_2 = 0;
 
-volatile uint32_t byte_size = 0;
-volatile uint16_t crc_data = 0;
-volatile uint16_t byte_bunch = 0;
-volatile uint32_t byte_counter = 0;
-volatile uint16_t crc_flash = 0;
-volatile uint64_t data = 0;
+uint32_t byte_size = 0;
+uint16_t crc_data = 0;
+uint16_t byte_bunch = 0;
+uint32_t byte_counter = 0;
+uint16_t crc_flash = 0;
+uint64_t data = 0;
 uint8_t error_crc = 0;
-volatile uint8_t worker_status = 0;
-volatile uint8_t status = 0;
-volatile uint8_t status1 = 0;
-volatile uint8_t status2 = 0;
-volatile uint8_t status3 = 0;
+uint8_t worker_status = 0;
+uint8_t status = 0;
+uint8_t status1 = 0;
+uint8_t status2 = 0;
+uint8_t status3 = 0;
 
 uint16_t size_moving_average_ZSK;
 volatile float32_t* zsk_average_array[ZSK_REG_485_QTY]; 
 float32_t average_result = 0.0;
 
 //volatile uint16_t reg_lost_packet = 0;
-volatile uint16_t reg_lost_packet[REG_485_QTY];
+uint16_t reg_lost_packet[REG_485_QTY];
 
 
 
@@ -4490,32 +4491,6 @@ void Data_Storage_Task(void const * argument)
 		if (menu_edit_mode == 0)
 		for (uint16_t i = 0; i < REG_485_QTY; i++)
 		{			
-						
-//				if (warming_flag == 0)
-//				if (channel_485_ON == 2) //Специальный режим работы для системы ЗСК	
-//				if(MOVING_AVERAGE == 1) //Расчитываем скользящее среднее и перезаписываем значение с учетом усреднения (ЗСК)		
-//				if (i < 15) //Усредняем только вибропараметры
-//				{												
-//						average_result = 0.0;																	
-//					
-//						//Сдвигаем массив для записи нового элемента
-//						for (int y = 1; y < size_moving_average_ZSK; y++)				
-//						{
-//								zsk_average_array[i][y-1] = zsk_average_array[i][y];
-//						}						
-//						
-//						//Записываем новое значение 						
-//						zsk_average_array[i][size_moving_average_ZSK - 1] = master_array[i].master_value;
-//						
-//						//Расчитываем среднее
-//						for (int j = 0; j < size_moving_average_ZSK; j++)				
-//						{
-//								average_result += zsk_average_array[i][j] / size_moving_average_ZSK;							
-//						}
-//						
-//						master_array[i].master_value = average_result;
-//				}			
-			
 			
 				master_array[i].master_on = settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 0];
 				master_array[i].master_addr = settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 1];
@@ -4834,7 +4809,9 @@ void TriggerLogic_Task(void const * argument)
 											
 											if (master_delay_relay_array[i].relay_permission_1 == 1)
 											{
-												trigger_485_event_attribute_warning |= (1<<(15-i));								
+												trigger_485_event_attribute_warning |= (1<<(15-i));																
+												bit_field[i*2] = 1; //Set warning bit to array of state
+												
 												state_warning_relay = 1;
 												flag_for_delay_relay_exit = 1;							
 												xSemaphoreGive( Semaphore_Relay_1 );							
@@ -4842,7 +4819,9 @@ void TriggerLogic_Task(void const * argument)
 										}	
 										else if (master_array[i].master_value < master_array[i].master_warning_set || master_array[i].master_value > master_array[i].low_master_warning_set) 						
 										{
-											if (mode_relay == 0) trigger_485_event_attribute_warning &= ~(1<<(15-i));								
+											if (mode_relay == 0) trigger_485_event_attribute_warning &= ~(1<<(15-i));				
+
+											if (mode_relay == 0) bit_field[i*2] = 0; //Reset bit to array of state											
 
 											master_delay_relay_array[i].timer_delay_relay_1 = 0;
 											master_delay_relay_array[i].relay_permission_1 = 0;	
@@ -4856,7 +4835,9 @@ void TriggerLogic_Task(void const * argument)
 											
 											if (master_delay_relay_array[i].relay_permission_2 == 1)
 											{
-												trigger_485_event_attribute_emerg |= (1<<(15-i));																			
+												trigger_485_event_attribute_emerg |= (1<<(15-i));			
+												bit_field[i*2 + 1] = 1; //Set emergency bit to array of state
+												
 												state_emerg_relay = 1;
 												flag_for_delay_relay_exit = 1;							
 												xSemaphoreGive( Semaphore_Relay_2 );							
@@ -4865,6 +4846,7 @@ void TriggerLogic_Task(void const * argument)
 										else if (master_array[i].master_value < master_array[i].master_emergency_set || master_array[i].master_value > master_array[i].low_master_emergency_set)						
 										{
 											if (mode_relay == 0) trigger_485_event_attribute_emerg &= ~(1<<(15-i));		
+											if (mode_relay == 0) bit_field[i*2 + 1] = 0; //Reset emergency bit to array of state
 
 											master_delay_relay_array[i].timer_delay_relay_2 = 0;
 											master_delay_relay_array[i].relay_permission_2 = 0;	
