@@ -181,7 +181,7 @@ float32_t pStates_main_high_4_20[8];
 
 int16_t settings[REG_COUNT]; //Settings array 
 int16_t mirror_values[MIRROR_COUNT]; 
-volatile int16_t bit_field[BIT_FIELD_COUNT];
+volatile uint8_t bit_field[BIT_FIELD_COUNT];
 
 uint8_t button_state = 0;
 
@@ -4032,14 +4032,23 @@ void Modbus_Transmit_Task(void const * argument)
 												}												
 											}
 											
-											if (adr_of_registers > 1080)	
+											if (adr_of_registers > 1080 && adr_of_registers < 1198)	
 											{
 												for (uint16_t i=0, j=0; i < MIRROR_COUNT; i++, j++)
 												{
 													transmitBuffer[j*2+3] = 0; //значение регистра Lo 		
 													transmitBuffer[j*2+4] = 0; //значение регистра Hi		
 												}												
-											}												
+											}								
+
+											if ( adr_of_registers > 1198 )	
+											{
+												for (uint16_t i=0, j=0; i < BIT_FIELD_COUNT; i++, j++)
+												{
+													transmitBuffer[j*2+3] = bit_field[i] >> 8; //значение регистра Lo 		
+													transmitBuffer[j*2+4] = bit_field[i] & 0x00FF; //значение регистра Hi		
+												}												
+											}														
 									
 											crc = crc16(transmitBuffer, count_registers*2+3);				
 									
@@ -4297,7 +4306,7 @@ void Master_Modbus_Transmit(void const * argument)
 
 		xTask18 = xTaskGetCurrentTaskHandle();	
 		
-		for(uint8_t i=0; i< REG_485_QTY; i++)
+		for(volatile uint8_t i=0; i< REG_485_QTY; i++)
 		{	
 			
 				if ( master_array[i].master_on == 1) //Если регистр выключен, то запрашиваем следующий		
@@ -4809,7 +4818,7 @@ void TriggerLogic_Task(void const * argument)
 											
 											if (master_delay_relay_array[i].relay_permission_1 == 1)
 											{
-												trigger_485_event_attribute_warning |= (1<<(15-i));																
+												trigger_event_attribute |= (1<<11);															
 												bit_field[i*2] = 1; //Set warning bit to array of state
 												
 												state_warning_relay = 1;
@@ -4819,7 +4828,7 @@ void TriggerLogic_Task(void const * argument)
 										}	
 										else if (master_array[i].master_value < master_array[i].master_warning_set || master_array[i].master_value > master_array[i].low_master_warning_set) 						
 										{
-											if (mode_relay == 0) trigger_485_event_attribute_warning &= ~(1<<(15-i));				
+											if (mode_relay == 0) trigger_event_attribute &= ~(1<<11);		
 
 											if (mode_relay == 0) bit_field[i*2] = 0; //Reset bit to array of state											
 
@@ -4835,7 +4844,7 @@ void TriggerLogic_Task(void const * argument)
 											
 											if (master_delay_relay_array[i].relay_permission_2 == 1)
 											{
-												trigger_485_event_attribute_emerg |= (1<<(15-i));			
+												trigger_event_attribute |= (1<<10);						
 												bit_field[i*2 + 1] = 1; //Set emergency bit to array of state
 												
 												state_emerg_relay = 1;
@@ -4845,7 +4854,7 @@ void TriggerLogic_Task(void const * argument)
 										}	
 										else if (master_array[i].master_value < master_array[i].master_emergency_set || master_array[i].master_value > master_array[i].low_master_emergency_set)						
 										{
-											if (mode_relay == 0) trigger_485_event_attribute_emerg &= ~(1<<(15-i));		
+											if (mode_relay == 0) trigger_event_attribute &= ~(1<<10);		
 											if (mode_relay == 0) bit_field[i*2 + 1] = 0; //Reset emergency bit to array of state
 
 											master_delay_relay_array[i].timer_delay_relay_2 = 0;
@@ -4861,13 +4870,9 @@ void TriggerLogic_Task(void const * argument)
 				
 				
 				if (channel_485_ON == 2) //Специальный режим работы для системы ЗСК
-				{
-					
-					
-					
+				{	
 						for (uint16_t i = 0; i < REG_485_QTY; i++)
-						{			
-										
+						{													
 								if (warming_flag == 0)								
 								if(MOVING_AVERAGE == 1) //Расчитываем скользящее среднее и перезаписываем значение с учетом усреднения (ЗСК)		
 								if (i < 15) //Усредняем только вибропараметры
@@ -4891,8 +4896,7 @@ void TriggerLogic_Task(void const * argument)
 										
 										master_array[i].master_value = average_result;
 								}
-						}						
-					
+						}			
 					
 						//Заморозка битов состояния, если была сработка 						
 						//if( (state_emerg_relay == 0) && (trigger_485_ZSK_percent < 99) && (trigger_485_ZSK < 0xC00) )												
@@ -4901,14 +4905,11 @@ void TriggerLogic_Task(void const * argument)
 							trigger_485_ZSK_percent = 0;
 						}
 					
-
-					
 						if (state_emerg_relay == 0)
 						for (uint8_t i = 0; i < ZSK_REG_485_QTY; i++)
 						{
 								if (master_array[i].master_on == 1) 
 								{			
-
 									
 										if ((i >= 0) && (i < 15)) //Регистры с вибропараметрами
 										{
@@ -4922,7 +4923,6 @@ void TriggerLogic_Task(void const * argument)
 													if (i == 9 || i == 10 || i == 11) trigger_485_ZSK |= (1<<3);
 													if (i == 12 || i == 13 || i == 14) trigger_485_ZSK |= (1<<4);	
 												}
-														
 												
 												//Предупредительная уставка											
 												if (master_array[i].master_value >= master_array[i].master_warning_set) 
