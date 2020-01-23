@@ -182,7 +182,7 @@ extern struct mb_master_delay_relay master_delay_relay_array[REG_485_QTY];
 
 #define MIRROR_COUNT (REG_485_QTY*2)
 
-#define BIT_FIELD_COUNT (40*2+4)
+#define BIT_FIELD_COUNT (40*2)
 #define BIT_FIELD_START_ADR 1200
 
 /* USER CODE END Private defines */

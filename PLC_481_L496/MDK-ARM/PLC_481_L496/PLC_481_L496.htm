@@ -3,7 +3,7 @@
 <title>Static Call Graph - [PLC_481_L496\PLC_481_L496.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image PLC_481_L496\PLC_481_L496.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Wed Jan 22 19:08:08 2020
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Thu Jan 23 09:37:46 2020
 <BR><P>
 <H3>Maximum Stack Usage =        704 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -871,7 +871,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l496xx.o(RESET)
 </UL>
-<P><STRONG><a name="[83]"></a>Data_Storage_Task</STRONG> (Thumb, 1482 bytes, Stack size 16 bytes, freertos.o(i.Data_Storage_Task))
+<P><STRONG><a name="[83]"></a>Data_Storage_Task</STRONG> (Thumb, 1486 bytes, Stack size 16 bytes, freertos.o(i.Data_Storage_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 160<LI>Call Chain = Data_Storage_Task &rArr; write_registers_to_flash &rArr; write_flash &rArr; HAL_FLASH_Program &rArr; FLASH_WaitForLastOperation
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_registers_to_flash
@@ -903,7 +903,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[7d]"></a>Display_Task</STRONG> (Thumb, 14160 bytes, Stack size 48 bytes, freertos.o(i.Display_Task))
+<P><STRONG><a name="[7d]"></a>Display_Task</STRONG> (Thumb, 14182 bytes, Stack size 48 bytes, freertos.o(i.Display_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 224<LI>Call Chain = Display_Task &rArr; save_settings &rArr; write_registers_to_flash &rArr; write_flash &rArr; HAL_FLASH_Program &rArr; FLASH_WaitForLastOperation
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
@@ -1701,7 +1701,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_DMATxHalfCplt
 </UL>
 
-<P><STRONG><a name="[87]"></a>HART_Receive_Task</STRONG> (Thumb, 110 bytes, Stack size 0 bytes, freertos.o(i.HART_Receive_Task))
+<P><STRONG><a name="[87]"></a>HART_Receive_Task</STRONG> (Thumb, 112 bytes, Stack size 0 bytes, freertos.o(i.HART_Receive_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = HART_Receive_Task &rArr; xQueueSemaphoreTake &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;crc16
@@ -2129,7 +2129,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StartDefaultTask
 </UL>
 
-<P><STRONG><a name="[84]"></a>TriggerLogic_Task</STRONG> (Thumb, 2820 bytes, Stack size 8 bytes, freertos.o(i.TriggerLogic_Task))
+<P><STRONG><a name="[84]"></a>TriggerLogic_Task</STRONG> (Thumb, 2910 bytes, Stack size 8 bytes, freertos.o(i.TriggerLogic_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = TriggerLogic_Task &rArr; write_reg_flash &rArr; HAL_FLASH_Program &rArr; FLASH_WaitForLastOperation
 </UL>
 <BR>[Calls]<UL><LI><a href="#[16c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_reg_flash
@@ -2583,7 +2583,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_init_settings
 </UL>
 
-<P><STRONG><a name="[d2]"></a>save_settings</STRONG> (Thumb, 430 bytes, Stack size 32 bytes, freertos.o(i.save_settings))
+<P><STRONG><a name="[d2]"></a>save_settings</STRONG> (Thumb, 432 bytes, Stack size 32 bytes, freertos.o(i.save_settings))
 <BR><BR>[Stack]<UL><LI>Max Depth = 176<LI>Call Chain = save_settings &rArr; write_registers_to_flash &rArr; write_flash &rArr; HAL_FLASH_Program &rArr; FLASH_WaitForLastOperation
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_registers_to_flash

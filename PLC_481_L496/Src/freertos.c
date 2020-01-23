@@ -486,7 +486,8 @@ float32_t average_result = 0.0;
 //volatile uint16_t reg_lost_packet = 0;
 uint16_t reg_lost_packet[REG_485_QTY];
 
-
+uint8_t event_bit_flag1 = 0;
+uint8_t event_bit_flag2 = 0;
 
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
@@ -4805,7 +4806,9 @@ void TriggerLogic_Task(void const * argument)
 				//Источник сигнала 485 (Modbus)
 				if (channel_485_ON == 1)
 				{		
-
+						event_bit_flag1 = 0;
+						event_bit_flag2 = 0;
+					
 						for (uint8_t i = 0; i< REG_485_QTY; i++)
 						{
 								if (master_array[i].master_on == 1)
@@ -4817,8 +4820,8 @@ void TriggerLogic_Task(void const * argument)
 											master_delay_relay_array[i].flag_delay_relay_1 = 1;
 											
 											if (master_delay_relay_array[i].relay_permission_1 == 1)
-											{
-												trigger_event_attribute |= (1<<11);															
+											{												
+												event_bit_flag1 = 1;												
 												bit_field[i*2] = 1; //Set warning bit to array of state
 												
 												state_warning_relay = 1;
@@ -4827,8 +4830,7 @@ void TriggerLogic_Task(void const * argument)
 											}
 										}	
 										else if (master_array[i].master_value < master_array[i].master_warning_set || master_array[i].master_value > master_array[i].low_master_warning_set) 						
-										{
-											if (mode_relay == 0) trigger_event_attribute &= ~(1<<11);		
+										{											
 
 											if (mode_relay == 0) bit_field[i*2] = 0; //Reset bit to array of state											
 
@@ -4843,8 +4845,8 @@ void TriggerLogic_Task(void const * argument)
 											master_delay_relay_array[i].flag_delay_relay_2 = 1;
 											
 											if (master_delay_relay_array[i].relay_permission_2 == 1)
-											{
-												trigger_event_attribute |= (1<<10);						
+											{												
+												event_bit_flag2 = 1;												
 												bit_field[i*2 + 1] = 1; //Set emergency bit to array of state
 												
 												state_emerg_relay = 1;
@@ -4853,15 +4855,19 @@ void TriggerLogic_Task(void const * argument)
 											}
 										}	
 										else if (master_array[i].master_value < master_array[i].master_emergency_set || master_array[i].master_value > master_array[i].low_master_emergency_set)						
-										{
-											if (mode_relay == 0) trigger_event_attribute &= ~(1<<10);		
+										{											
 											if (mode_relay == 0) bit_field[i*2 + 1] = 0; //Reset emergency bit to array of state
 
 											master_delay_relay_array[i].timer_delay_relay_2 = 0;
 											master_delay_relay_array[i].relay_permission_2 = 0;	
 											master_delay_relay_array[i].flag_delay_relay_2 = 0; 											
-										}										
+										}					
+
+										if (event_bit_flag1 == 1) trigger_event_attribute |= (1<<11);											
+										else if (mode_relay == 0) trigger_event_attribute &= ~(1<<11);		
 										
+										if (event_bit_flag2 == 1) trigger_event_attribute |= (1<<10);											
+										else if (mode_relay == 0) trigger_event_attribute &= ~(1<<10);										
 
 								}
 						}		
