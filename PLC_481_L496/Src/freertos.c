@@ -4042,7 +4042,7 @@ void Modbus_Transmit_Task(void const * argument)
 												}												
 											}								
 
-											if ( adr_of_registers > 1198 )	
+											if ( adr_of_registers > (BIT_FIELD_START_ADR-2) )	
 											{
 												for (uint16_t i=0, j=0; i < BIT_FIELD_COUNT; i++, j++)
 												{
@@ -4132,28 +4132,6 @@ void Modbus_Transmit_Task(void const * argument)
 						
 				}
 				
-//				//Команда для перепрошивки
-//				if (receiveBuffer[1] == 0x62 && receiveBuffer[2] == 0x6F && receiveBuffer[3] == 0x6F && receiveBuffer[4] == 0x74)
-//				{					
-//					
-//					transmitBuffer[0] = 0x72;
-//					transmitBuffer[1] = 0x65;
-//					transmitBuffer[2] = 0x61;
-//					transmitBuffer[3] = 0x64;
-//					transmitBuffer[4] = 0x79;
-//										
-//					HAL_UART_Transmit_DMA(&huart2, transmitBuffer, 5);
-//					
-//					bootloader_state = 1;		
-//					
-//					JumpToApplication(BOOT_START_ADDRESS);
-//					//rtc_write_backup_reg(1, bootloader_state);					
-//					//NVIC_SystemReset();
-//					
-//					//receiveBuffer[1] = 0x00; boot_receiveBuffer[1] = 0x00;
-//					
-//				}
-//				else bootloader_state = 0;
 		}   
   }
   /* USER CODE END Modbus_Transmit_Task */

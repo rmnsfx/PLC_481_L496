@@ -137,7 +137,7 @@
 
 #define TIME_BREAK_SENSOR_485 15 //сек.
 
-#define VERSION 5.42
+#define VERSION 5.421
 
 #define REG_485_QTY 40
 #define REG_485_START_ADDR 144
@@ -182,7 +182,7 @@ extern struct mb_master_delay_relay master_delay_relay_array[REG_485_QTY];
 
 #define MIRROR_COUNT (REG_485_QTY*2)
 
-#define BIT_FIELD_COUNT (40*2)
+#define BIT_FIELD_COUNT (REG_485_QTY*2)
 #define BIT_FIELD_START_ADR 1200
 
 /* USER CODE END Private defines */
