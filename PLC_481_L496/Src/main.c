@@ -187,8 +187,6 @@ extern uint16_t timer_delay_relay_2_icp;
 
 extern struct mb_master_delay_relay master_delay_relay_array[REG_485_QTY];
 
-struct master_delay_status_485 master_delay_status_485_array[REG_485_QTY];
-
 extern uint8_t quit_relay_button;
 uint8_t quit_timer = 0;
 
@@ -202,6 +200,10 @@ extern uint8_t worker_status;
 
 extern uint16_t size_moving_average_ZSK;
 extern uint64_t trigger_485_ZSK; 
+
+volatile uint32_t warm_timer = 0;
+extern uint16_t warming_up;
+extern uint8_t warming_flag;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -645,18 +647,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 				timer_485_counter ++;
 				if (timer_485_counter > TIME_BREAK_SENSOR_485)
 				{
-					break_sensor_485 = 0;
+					break_sensor_485 = 1;
 				}
 				
-        for (uint8_t i = 0; i < REG_485_QTY; i++)
-				{
-					master_delay_status_485_array[i].delay++;
-					
-					if (master_delay_status_485_array[i].delay > TIME_BREAK_SENSOR_485)
-					{
-						master_delay_status_485_array[i].status = 0;					
-					}
-				}				
+
 				
 				//Таймер для задержки на срабатывание реле 1 (канал 4-20)
 				if (flag_delay_relay_1_4_20 == 1)
@@ -741,6 +735,19 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	
 		//cpu_load = 100 - (100 * temp1 / 1350);
 		cpu_load2 = 100 - (100 * temp1 / 1351854);
+		
+		
+		//Таймер прогрева (мс.)
+		if (warm_timer >= warming_up) 
+		{
+			warming_flag = 0;
+			warm_timer = 0;
+		}
+		else 
+		{
+			warm_timer += 100;		
+		}
+		
   }
   /* USER CODE END Callback 1 */
 }
