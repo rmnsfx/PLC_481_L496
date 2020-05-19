@@ -5133,6 +5133,7 @@ void TriggerLogic_Task(void const * argument)
 						if(break_sensor_485 == 1) 
 						{
 							state_emerg_relay = 1;							
+							trigger_485_ZSK_percent = 100;
 							xSemaphoreGive( Semaphore_Relay_2 );							
 						}
 						
@@ -5166,6 +5167,7 @@ void TriggerLogic_Task(void const * argument)
 			state_emerg_relay = 1;
 			osDelay(20000);
 			test_relay = 0;
+			trigger_485_ZSK_percent = 100;
 		}
 		
 		// витирование
@@ -5180,8 +5182,7 @@ void TriggerLogic_Task(void const * argument)
 			trigger_event_attribute = 0;
 			trigger_485_event_attribute_warning = 0;
 			trigger_485_event_attribute_emerg = 0;			
-			
-			
+						
 			settings[96] = 0;
 			
 			if (menu_horizontal == 0) 
