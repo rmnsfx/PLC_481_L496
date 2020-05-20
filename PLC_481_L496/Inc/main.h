@@ -114,7 +114,7 @@
 
 #define FILTER_MODE filter_mode_icp
 
-//(Опорное напряжение АЦП / Разрядность АЦП (если oversampling 16 bit)) / Дополнительный коэф.
+//(Опорное напряжение АЦП / Разрядность АЦП) / Дополнительный коэф. (резисторы)
 #define COEF_TRANSFORM_VOLT (3.3 / 4095.0) / (402.0 / 510.0) 
 
 //Диапазон ускорения (м/с2) / диапазон переменного напряжения (Вольты)
@@ -137,7 +137,7 @@
 
 #define TIME_BREAK_SENSOR_485 15 //сек.
 
-#define VERSION 5.431
+#define VERSION 5.46
 
 #define REG_485_QTY 40
 #define REG_485_START_ADDR 144

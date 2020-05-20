@@ -218,6 +218,7 @@ float32_t rms_acceleration_icp = 0.0;
 float32_t rms_velocity_icp = 0.0;
 float32_t rms_displacement_icp = 0.0;
 
+float32_t sensor_coef = 0.0;
 float32_t icp_coef_K = 0.0;
 float32_t icp_coef_B = 0.0;
 
@@ -929,10 +930,16 @@ void Acceleration_Task(void const * argument)
 		xQueueSend(acceleration_queue_icp, (void*)&temp_rms_acceleration_icp, 0);				
 		xQueueSend(queue_4_20, (void*)&temp_mean_acceleration_4_20, 0);		
 		
-//		xQueueSend(acceleration_peak_queue_icp, (void*)&temp_max_acceleration_icp, 0);				
-//		xQueueSend(acceleration_2peak_queue_icp, (void*)&temp_min_acceleration_icp, 0);
-		max_acceleration_icp = temp_max_acceleration_icp * icp_coef_K + icp_coef_B;
-		min_acceleration_icp = temp_min_acceleration_icp * icp_coef_K + icp_coef_B;
+
+//		max_acceleration_icp = temp_max_acceleration_icp * icp_coef_K  + icp_coef_B;
+//		min_acceleration_icp = temp_min_acceleration_icp * icp_coef_K  + icp_coef_B;
+
+		max_acceleration_icp = (temp_max_acceleration_icp * COEF_TRANSFORM_VOLT) * icp_coef_K  + icp_coef_B;
+		min_acceleration_icp = (temp_min_acceleration_icp * COEF_TRANSFORM_VOLT) * icp_coef_K  + icp_coef_B;
+		
+		max_acceleration_icp = max_acceleration_icp / (sensor_coef / 1000);
+		min_acceleration_icp = min_acceleration_icp / (sensor_coef / 1000);
+		
 
 		xQueueSend(queue_peak_4_20, (void*)&temp_max_acceleration_4_20, 0);				
 		xQueueSend(queue_2peak_4_20, (void*)&temp_min_acceleration_4_20, 0);
@@ -1007,10 +1014,17 @@ void Velocity_Task(void const * argument)
 		
 		xQueueSend(velocity_queue_icp, (void*)&temp_rms_velocity_icp, 0);	
 
-//		xQueueSend(velocity_peak_queue_icp, (void*)&temp_max_velocity_icp, 0);	
-//		xQueueSend(velocity_2peak_queue_icp, (void*)&temp_min_velocity_icp, 0);	
-		max_velocity_icp = (float32_t) (temp_max_velocity_icp * icp_coef_K + icp_coef_B);
-		min_velocity_icp = (float32_t) (temp_min_velocity_icp * icp_coef_K + icp_coef_B);
+
+//		max_velocity_icp = (float32_t) (temp_max_velocity_icp * icp_coef_K + icp_coef_B);
+//		min_velocity_icp = (float32_t) (temp_min_velocity_icp * icp_coef_K + icp_coef_B);
+
+		max_velocity_icp = (temp_max_velocity_icp * COEF_TRANSFORM_VOLT) * icp_coef_K  + icp_coef_B;
+		min_velocity_icp = (temp_min_velocity_icp * COEF_TRANSFORM_VOLT) * icp_coef_K  + icp_coef_B;
+		
+		max_velocity_icp = max_velocity_icp / (sensor_coef / 1000);
+		min_velocity_icp = min_velocity_icp / (sensor_coef / 1000);
+		
+		
 		
 		xSemaphoreGive( Semaphore_Displacement );
 		xSemaphoreGive( Q_Semaphore_Velocity );		
@@ -1062,10 +1076,17 @@ void Displacement_Task(void const * argument)
 								
 		xQueueSend(displacement_queue_icp, (void*)&temp_rms_displacement_icp, 0);
 		
-//		xQueueSend(displacement_peak_queue_icp, (void*)&temp_max_displacement_icp, 0);
-//		xQueueSend(displacement_2peak_queue_icp, (void*)&temp_min_displacement_icp, 0);		
-		max_displacement_icp = (float32_t) (temp_max_displacement_icp  * icp_coef_K + icp_coef_B);
-		min_displacement_icp = (float32_t) (temp_min_displacement_icp * icp_coef_K + icp_coef_B);
+
+//		max_displacement_icp = (float32_t) (temp_max_displacement_icp  * icp_coef_K + icp_coef_B);
+//		min_displacement_icp = (float32_t) (temp_min_displacement_icp * icp_coef_K + icp_coef_B);
+
+		max_displacement_icp = (temp_max_displacement_icp * COEF_TRANSFORM_VOLT) * icp_coef_K  + icp_coef_B;
+		min_displacement_icp = (temp_min_displacement_icp * COEF_TRANSFORM_VOLT) * icp_coef_K  + icp_coef_B;
+		
+		max_displacement_icp = max_displacement_icp / (sensor_coef / 1000);
+		min_displacement_icp = min_displacement_icp / (sensor_coef / 1000);
+		
+		
 		
 		xSemaphoreGive( Q_Semaphore_Displacement );
 		
@@ -1103,25 +1124,15 @@ void Q_Average_A(void const * argument)
 					
 					arm_rms_f32( Q_A_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_acceleration_icp);	
 					
-					icp_voltage  = rms_acceleration_icp * COEF_TRANSFORM_VOLT;
+					//Расчет переменного напряжения 
+					icp_voltage = (rms_acceleration_icp * COEF_TRANSFORM_VOLT) * icp_coef_K + icp_coef_B;					
+
+					//Расчет ускорения из напряжения
+					//rms_acceleration_icp = icp_voltage * icp_coef_K + icp_coef_B;
 					
+					//Применеяем коэф. датчика
+					rms_acceleration_icp = icp_voltage / (sensor_coef / 1000);
 					
-					//rms_acceleration_icp = (float32_t) COEF_TRANSFORM_icp_acceleration * icp_voltage;
-					//rms_acceleration_icp = (float32_t) (icp_range_volt / icp_range_a) * icp_voltage;
-					rms_acceleration_icp = rms_acceleration_icp * icp_coef_K + icp_coef_B;
-					
-					
-//					max_acceleration_icp = 0.0;
-//					min_acceleration_icp = 0.0;
-//					for (uint16_t i=0; i<QUEUE_LENGHT; i++)
-//					{
-//							xQueueReceive(acceleration_peak_queue_icp, (void *) &Q_A_peak_array_icp[i], 0);										
-//							xQueueReceive(acceleration_2peak_queue_icp, (void *) &Q_A_2peak_array_icp[i], 0);										
-//					}
-//					arm_max_f32( (float32_t*)&Q_A_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_acceleration_icp, &index );
-//					arm_min_f32( (float32_t*)&Q_A_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_acceleration_icp, &index );
-//					max_acceleration_icp = max_acceleration_icp * icp_coef_K + icp_coef_B;
-//					min_acceleration_icp = min_acceleration_icp * icp_coef_K + icp_coef_B;
 			}
 				
 				
@@ -1194,26 +1205,16 @@ void Q_Average_V(void const * argument)
 					arm_rms_f32( Q_V_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_velocity_icp );
 										
 						
-					rms_velocity_icp = (float32_t) (rms_velocity_icp * icp_coef_K + icp_coef_B);		
+					rms_velocity_icp = (rms_velocity_icp * COEF_TRANSFORM_VOLT) * icp_coef_K + icp_coef_B;		
+					
+					//Применеяем коэф. датчика
+					rms_velocity_icp /= (sensor_coef / 1000);
+					
 
-					//Calculation of the difference between the passage
+					//Calculation of the difference between the passage / Время между проходами цикла /
 					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
-					xTimeBefore = xTaskGetTickCount();	
-										
-			
-			
-			
-//					max_velocity_icp = 0.0;
-//					min_velocity_icp = 0.0;
-//					for (uint16_t i=0; i<QUEUE_LENGHT; i++)
-//					{
-//							xQueueReceive(velocity_peak_queue_icp, (void *) &Q_V_peak_array_icp[i], 0);										
-//							xQueueReceive(velocity_2peak_queue_icp, (void *) &Q_V_2peak_array_icp[i], 0);										
-//					}
-//					arm_max_f32( (float32_t*)&Q_V_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_velocity_icp, &index );
-//					arm_min_f32( (float32_t*)&Q_V_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_velocity_icp, &index );
-//					max_velocity_icp = (float32_t) (max_velocity_icp * icp_coef_K + icp_coef_B);
-//					min_velocity_icp = (float32_t) (min_velocity_icp * icp_coef_K + icp_coef_B);
+					xTimeBefore = xTaskGetTickCount();								
+
 			}
 
   }
@@ -1249,21 +1250,11 @@ void Q_Average_D(void const * argument)
 					
 					arm_rms_f32( Q_D_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_displacement_icp );
 
-					rms_displacement_icp = (float32_t) (rms_displacement_icp * icp_coef_K + icp_coef_B);					
-			 
+					rms_displacement_icp = (rms_displacement_icp * COEF_TRANSFORM_VOLT) * icp_coef_K + icp_coef_B;							 
+					
+					//Применеяем коэф. датчика
+					rms_displacement_icp /= (sensor_coef / 1000);
 
-
-//					max_displacement_icp = 0.0;
-//					min_displacement_icp = 0.0;
-//					for (uint16_t i=0; i<QUEUE_LENGHT; i++)
-//					{
-//							xQueueReceive(displacement_peak_queue_icp, (void *) &Q_D_peak_array_icp[i], 0);										
-//							xQueueReceive(displacement_2peak_queue_icp, (void *) &Q_D_2peak_array_icp[i], 0);										
-//					}
-//					arm_max_f32( (float32_t*)&Q_D_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_displacement_icp, &index );
-//					arm_min_f32( (float32_t*)&Q_D_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_displacement_icp, &index );
-//					max_displacement_icp = (float32_t) (max_displacement_icp  * icp_coef_K + icp_coef_B);
-//					min_displacement_icp = (float32_t) (min_displacement_icp * icp_coef_K + icp_coef_B);
 			}
   }
   /* USER CODE END Q_Average_D */
