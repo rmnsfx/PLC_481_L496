@@ -1532,7 +1532,7 @@ void Display_Task(void const * argument)
 						else horizont_menu_lenght = 4;	
 					}
 					
-					if (menu_index_pointer == 5) horizont_menu_lenght = 4; //Settings
+					if (menu_index_pointer == 5) horizont_menu_lenght = 5; //Settings
 					if (menu_index_pointer == 6) horizont_menu_lenght = 3; //Информация
 					if (menu_index_pointer == 7) horizont_menu_lenght = 3; //Конфигурация
 					
@@ -3446,9 +3446,42 @@ void Display_Task(void const * argument)
 						//ssd1306_UpdateScreen();				
 					}						
 					
+					if (menu_index_pointer == 5 && menu_horizontal == 3) //Скорость обмена (шинный соединитель)
+					{
+						ssd1306_Fill(0);
+						ssd1306_SetCursor(0,0);												
+						ssd1306_WriteString("Настр",font_8x15_RU,1);																
+						ssd1306_WriteString(".",font_8x14,1);					
+
+						triangle_left(55,0);
+						triangle_right(60,0);
+						//triangle_up(58,38);
+						//triangle_down(58,43);
+						
+						ssd1306_SetCursor(0,15);
+						strncpy(msg,"Скорость шина", 13);						
+						string_scroll(msg, 13);
+						
+						ssd1306_SetCursor(0,32);						
+						if (menu_edit_mode == 1) //Режим редактирования
+						{
+							edit_mode_from_list(&baud_rate_uart_3, (uint32_t*)&baudrate_array);
+							disable_up_down_button = 0;
+							disable_left_right_button = 1;
+						}
+						else 
+						{
+							snprintf(buffer, sizeof buffer, "%.00f", baud_rate_uart_3);			
+							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+							disable_up_down_button = 1;
+							disable_left_right_button = 0;
+						}
+												
+						//ssd1306_UpdateScreen();				
+					}						
 									
 					
-					if (menu_index_pointer == 5 && menu_horizontal == 3) //Время прогрева
+					if (menu_index_pointer == 5 && menu_horizontal == 4) //Время прогрева
 					{
 						ssd1306_Fill(0);
 						ssd1306_SetCursor(0,0);												
@@ -3482,7 +3515,7 @@ void Display_Task(void const * argument)
 						//ssd1306_UpdateScreen();				
 					}		
 					
-					if (menu_index_pointer == 5 && menu_horizontal == 4) //Сброс настроек 
+					if (menu_index_pointer == 5 && menu_horizontal == 5) //Сброс настроек 
 					{
 						ssd1306_Fill(0);
 						ssd1306_SetCursor(0,0);												
