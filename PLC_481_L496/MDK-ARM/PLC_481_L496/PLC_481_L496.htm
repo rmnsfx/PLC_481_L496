@@ -3,7 +3,7 @@
 <title>Static Call Graph - [PLC_481_L496\PLC_481_L496.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image PLC_481_L496\PLC_481_L496.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Mon Nov 25 14:40:24 2019
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Thu May 21 11:54:46 2020
 <BR><P>
 <H3>Maximum Stack Usage =        704 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -504,10 +504,15 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dsub
 <LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
+<LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Velocity_Task
+<LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_V
+<LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_D
 <LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_A
 <LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Integrate_V
 <LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Integrate_D
+<LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Displacement_Task
 <LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DAC_Task
+<LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Acceleration_Task
 <LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_drsub
 <LI><a href="#[177]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_fp_digits
 </UL>
@@ -532,10 +537,15 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_double_epilogue
 </UL>
 <BR>[Called By]<UL><LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode_from_list
+<LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Velocity_Task
+<LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_V
+<LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_D
 <LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_A
 <LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Transmit
 <LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Receive
+<LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Displacement_Task
 <LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DAC_Task
+<LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Acceleration_Task
 <LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_supply_voltage
 <LI><a href="#[177]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_fp_digits
 </UL>
@@ -545,10 +555,15 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_double_round
 </UL>
-<BR>[Called By]<UL><LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_A
+<BR>[Called By]<UL><LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Velocity_Task
+<LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_V
+<LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_D
+<LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_A
 <LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Transmit
 <LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Receive
+<LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Displacement_Task
 <LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DAC_Task
+<LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Acceleration_Task
 <LI><a href="#[177]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_fp_digits
 </UL>
 
@@ -557,7 +572,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_float_epilogue
 </UL>
-<BR>[Called By]<UL><LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;turnover_counter
+<BR>[Called By]<UL><LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;turnover_counter
 <LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Transmit
 <LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Receive
 <LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Data_Storage_Task
@@ -580,16 +595,21 @@ Global Symbols
 <LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Receive
 </UL>
 
-<P><STRONG><a name="[bf]"></a>__aeabi_f2d</STRONG> (Thumb, 38 bytes, Stack size 0 bytes, f2d.o(.text))
+<P><STRONG><a name="[bc]"></a>__aeabi_f2d</STRONG> (Thumb, 38 bytes, Stack size 0 bytes, f2d.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode_from_list
 <LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
+<LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Velocity_Task
+<LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_V
+<LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_D
 <LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_A
 <LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Transmit
 <LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Receive
 <LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Integrate_V
 <LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Integrate_D
 <LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Task
+<LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Displacement_Task
 <LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DAC_Task
+<LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Acceleration_Task
 </UL>
 
 <P><STRONG><a name="[a2]"></a>__aeabi_d2f</STRONG> (Thumb, 56 bytes, Stack size 8 bytes, d2f.o(.text))
@@ -599,12 +619,17 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode_from_list
 <LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
+<LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Velocity_Task
+<LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_V
+<LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_D
 <LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_A
 <LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Transmit
 <LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Receive
 <LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Integrate_V
 <LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Integrate_D
+<LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Displacement_Task
 <LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DAC_Task
+<LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Acceleration_Task
 <LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_supply_voltage
 </UL>
 
@@ -766,8 +791,8 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[74]"></a>Acceleration_Task</STRONG> (Thumb, 574 bytes, Stack size 40 bytes, freertos.o(i.Acceleration_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = Acceleration_Task &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[74]"></a>Acceleration_Task</STRONG> (Thumb, 716 bytes, Stack size 104 bytes, freertos.o(i.Acceleration_Task))
+<BR><BR>[Stack]<UL><LI>Max Depth = 216<LI>Call Chain = Acceleration_Task &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_rms_f32
 <LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_min_f32
@@ -775,7 +800,12 @@ Global Symbols
 <LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_biquad_cascade_df1_f32
 <LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueSemaphoreTake
 <LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
-<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;turnover_counter
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
+<LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ddiv
+<LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
+<LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
+<LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;turnover_counter
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
@@ -790,7 +820,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = Button_Task &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
-<LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_ReadPin
+<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_ReadPin
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
@@ -798,13 +828,13 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = DAC_Task &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
-<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
 <LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
 <LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ddiv
 <LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
 <LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
 <LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DAC_SetValue
-<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;convert_hex_to_float
+<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;convert_hex_to_float
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
@@ -871,7 +901,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l496xx.o(RESET)
 </UL>
-<P><STRONG><a name="[83]"></a>Data_Storage_Task</STRONG> (Thumb, 1488 bytes, Stack size 16 bytes, freertos.o(i.Data_Storage_Task))
+<P><STRONG><a name="[83]"></a>Data_Storage_Task</STRONG> (Thumb, 1540 bytes, Stack size 16 bytes, freertos.o(i.Data_Storage_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 160<LI>Call Chain = Data_Storage_Task &rArr; write_registers_to_flash &rArr; write_flash &rArr; HAL_FLASH_Program &rArr; FLASH_WaitForLastOperation
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_registers_to_flash
@@ -882,7 +912,7 @@ Global Symbols
 <LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortEnterCritical
 <LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FilterInit
 <LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_init_settings
-<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;convert_hex_to_float
+<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;convert_hex_to_float
 <LI><a href="#[c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;convert_float_and_swap
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
@@ -890,8 +920,8 @@ Global Symbols
 <P><STRONG><a name="[7]"></a>DebugMon_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32l4xx_it.o(i.DebugMon_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l496xx.o(RESET)
 </UL>
-<P><STRONG><a name="[76]"></a>Displacement_Task</STRONG> (Thumb, 160 bytes, Stack size 24 bytes, freertos.o(i.Displacement_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = Displacement_Task &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[76]"></a>Displacement_Task</STRONG> (Thumb, 302 bytes, Stack size 96 bytes, freertos.o(i.Displacement_Task))
+<BR><BR>[Stack]<UL><LI>Max Depth = 208<LI>Call Chain = Displacement_Task &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_rms_f32
 <LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_min_f32
@@ -899,11 +929,16 @@ Global Symbols
 <LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_biquad_cascade_df1_f32
 <LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueSemaphoreTake
 <LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
+<LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ddiv
+<LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
+<LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
 <LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Integrate_D
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[7d]"></a>Display_Task</STRONG> (Thumb, 14198 bytes, Stack size 48 bytes, freertos.o(i.Display_Task))
+<P><STRONG><a name="[7d]"></a>Display_Task</STRONG> (Thumb, 14388 bytes, Stack size 48 bytes, freertos.o(i.Display_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 224<LI>Call Chain = Display_Task &rArr; save_settings &rArr; write_registers_to_flash &rArr; write_flash &rArr; HAL_FLASH_Program &rArr; FLASH_WaitForLastOperation
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
@@ -919,7 +954,7 @@ Global Symbols
 <LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;logo
 <LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_logo
 <LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
-<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
 <LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;string_scroll_with_number
 <LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;string_scroll
 <LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;save_settings
@@ -1260,7 +1295,7 @@ Global Symbols
 <LI><a href="#[11a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCC_MCOConfig
 </UL>
 
-<P><STRONG><a name="[bd]"></a>HAL_GPIO_ReadPin</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, stm32l4xx_hal_gpio.o(i.HAL_GPIO_ReadPin))
+<P><STRONG><a name="[be]"></a>HAL_GPIO_ReadPin</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, stm32l4xx_hal_gpio.o(i.HAL_GPIO_ReadPin))
 <BR><BR>[Called By]<UL><LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_menu
 <LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TriggerLogic_Task
 <LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Lights_Task
@@ -1701,7 +1736,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_DMATxHalfCplt
 </UL>
 
-<P><STRONG><a name="[87]"></a>HART_Receive_Task</STRONG> (Thumb, 110 bytes, Stack size 0 bytes, freertos.o(i.HART_Receive_Task))
+<P><STRONG><a name="[87]"></a>HART_Receive_Task</STRONG> (Thumb, 112 bytes, Stack size 0 bytes, freertos.o(i.HART_Receive_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = HART_Receive_Task &rArr; xQueueSemaphoreTake &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;crc16
@@ -1730,7 +1765,7 @@ Global Symbols
 <P><STRONG><a name="[c9]"></a>Integrate_D</STRONG> (Thumb, 82 bytes, Stack size 24 bytes, freertos.o(i.Integrate_D))
 <BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = Integrate_D &rArr; __aeabi_dadd &rArr; _double_epilogue &rArr; _double_round
 </UL>
-<BR>[Calls]<UL><LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<BR>[Calls]<UL><LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
 <LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
 <LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
 </UL>
@@ -1740,7 +1775,7 @@ Global Symbols
 <P><STRONG><a name="[144]"></a>Integrate_V</STRONG> (Thumb, 82 bytes, Stack size 24 bytes, freertos.o(i.Integrate_V))
 <BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = Integrate_V &rArr; __aeabi_dadd &rArr; _double_epilogue &rArr; _double_round
 </UL>
-<BR>[Calls]<UL><LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<BR>[Calls]<UL><LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
 <LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
 <LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
 </UL>
@@ -1762,7 +1797,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
 <LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 <LI><a href="#[146]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_TogglePin
-<LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_ReadPin
+<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_ReadPin
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
@@ -1904,7 +1939,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[81]"></a>Master_Modbus_Receive</STRONG> (Thumb, 612 bytes, Stack size 24 bytes, freertos.o(i.Master_Modbus_Receive))
+<P><STRONG><a name="[81]"></a>Master_Modbus_Receive</STRONG> (Thumb, 598 bytes, Stack size 24 bytes, freertos.o(i.Master_Modbus_Receive))
 <BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = Master_Modbus_Receive &rArr; xQueueSemaphoreTake &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;crc16
@@ -1912,18 +1947,18 @@ Global Symbols
 <LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueSemaphoreTake
 <LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ul2f
 <LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ul2d
-<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
 <LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
 <LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ddiv
 <LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
 <LI><a href="#[141]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_Receive_DMA
 <LI><a href="#[138]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_DMAStop
-<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;convert_hex_to_float
+<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;convert_hex_to_float
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[82]"></a>Master_Modbus_Transmit</STRONG> (Thumb, 338 bytes, Stack size 16 bytes, freertos.o(i.Master_Modbus_Transmit))
-<BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = Master_Modbus_Transmit &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
+<P><STRONG><a name="[82]"></a>Master_Modbus_Transmit</STRONG> (Thumb, 452 bytes, Stack size 24 bytes, freertos.o(i.Master_Modbus_Transmit))
+<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = Master_Modbus_Transmit &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;crc16
 <LI><a href="#[15d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
@@ -1932,7 +1967,7 @@ Global Symbols
 <LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 <LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ul2f
 <LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ul2d
-<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
 <LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
 <LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ddiv
 <LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
@@ -1958,7 +1993,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[80]"></a>Modbus_Transmit_Task</STRONG> (Thumb, 756 bytes, Stack size 48 bytes, freertos.o(i.Modbus_Transmit_Task))
+<P><STRONG><a name="[80]"></a>Modbus_Transmit_Task</STRONG> (Thumb, 826 bytes, Stack size 48 bytes, freertos.o(i.Modbus_Transmit_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = Modbus_Transmit_Task &rArr; xQueueSemaphoreTake &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;crc16
@@ -1970,8 +2005,8 @@ Global Symbols
 <P><STRONG><a name="[1]"></a>NMI_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32l4xx_it.o(i.NMI_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l496xx.o(RESET)
 </UL>
-<P><STRONG><a name="[77]"></a>Q_Average_A</STRONG> (Thumb, 446 bytes, Stack size 24 bytes, freertos.o(i.Q_Average_A))
-<BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = Q_Average_A &rArr; xQueueReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[77]"></a>Q_Average_A</STRONG> (Thumb, 494 bytes, Stack size 32 bytes, freertos.o(i.Q_Average_A))
+<BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = Q_Average_A &rArr; xQueueReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_rms_f32
 <LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_min_f32
@@ -1979,7 +2014,7 @@ Global Symbols
 <LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueSemaphoreTake
 <LI><a href="#[160]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueReceive
 <LI><a href="#[15f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxQueueMessagesWaiting
-<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
 <LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dsub
 <LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
 <LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ddiv
@@ -1988,24 +2023,34 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[79]"></a>Q_Average_D</STRONG> (Thumb, 122 bytes, Stack size 0 bytes, freertos.o(i.Q_Average_D))
-<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = Q_Average_D &rArr; xQueueReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[79]"></a>Q_Average_D</STRONG> (Thumb, 200 bytes, Stack size 16 bytes, freertos.o(i.Q_Average_D))
+<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = Q_Average_D &rArr; xQueueReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_rms_f32
 <LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueSemaphoreTake
 <LI><a href="#[160]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueReceive
 <LI><a href="#[15f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxQueueMessagesWaiting
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
+<LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ddiv
+<LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
+<LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[78]"></a>Q_Average_V</STRONG> (Thumb, 154 bytes, Stack size 0 bytes, freertos.o(i.Q_Average_V))
-<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = Q_Average_V &rArr; xQueueReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[78]"></a>Q_Average_V</STRONG> (Thumb, 232 bytes, Stack size 16 bytes, freertos.o(i.Q_Average_V))
+<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = Q_Average_V &rArr; xQueueReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_rms_f32
 <LI><a href="#[15d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
 <LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueSemaphoreTake
 <LI><a href="#[160]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueReceive
 <LI><a href="#[15f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxQueueMessagesWaiting
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
+<LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ddiv
+<LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
+<LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
@@ -2129,14 +2174,14 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StartDefaultTask
 </UL>
 
-<P><STRONG><a name="[84]"></a>TriggerLogic_Task</STRONG> (Thumb, 2864 bytes, Stack size 8 bytes, freertos.o(i.TriggerLogic_Task))
+<P><STRONG><a name="[84]"></a>TriggerLogic_Task</STRONG> (Thumb, 2886 bytes, Stack size 8 bytes, freertos.o(i.TriggerLogic_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = TriggerLogic_Task &rArr; write_reg_flash &rArr; HAL_FLASH_Program &rArr; FLASH_WaitForLastOperation
 </UL>
 <BR>[Calls]<UL><LI><a href="#[16c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_reg_flash
 <LI><a href="#[ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
 <LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
 <LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
-<LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_ReadPin
+<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_ReadPin
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
@@ -2204,7 +2249,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l496xx.o(RESET)
 </UL>
-<P><STRONG><a name="[8b]"></a>Update_Bootloader_Task</STRONG> (Thumb, 462 bytes, Stack size 24 bytes, freertos.o(i.Update_Bootloader_Task))
+<P><STRONG><a name="[8b]"></a>Update_Bootloader_Task</STRONG> (Thumb, 434 bytes, Stack size 24 bytes, freertos.o(i.Update_Bootloader_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = Update_Bootloader_Task &rArr; xQueueSemaphoreTake &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_FLASH_Unlock
@@ -2226,8 +2271,8 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l496xx.o(RESET)
 </UL>
-<P><STRONG><a name="[75]"></a>Velocity_Task</STRONG> (Thumb, 172 bytes, Stack size 24 bytes, freertos.o(i.Velocity_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = Velocity_Task &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[75]"></a>Velocity_Task</STRONG> (Thumb, 314 bytes, Stack size 96 bytes, freertos.o(i.Velocity_Task))
+<BR><BR>[Stack]<UL><LI>Max Depth = 208<LI>Call Chain = Velocity_Task &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_rms_f32
 <LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_min_f32
@@ -2235,6 +2280,11 @@ Global Symbols
 <LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_biquad_cascade_df1_f32
 <LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueSemaphoreTake
 <LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
+<LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ddiv
+<LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
+<LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
 <LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Integrate_V
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
@@ -2326,7 +2376,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[1a2]"></a>arm_mean_f32</STRONG> (Thumb, 88 bytes, Stack size 0 bytes, arm_mean_f32.o(i.arm_mean_f32))
-<BR><BR>[Called By]<UL><LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;turnover_counter
+<BR><BR>[Called By]<UL><LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;turnover_counter
 </UL>
 
 <P><STRONG><a name="[ba]"></a>arm_min_f32</STRONG> (Thumb, 146 bytes, Stack size 20 bytes, arm_min_f32.o(i.arm_min_f32))
@@ -2365,7 +2415,7 @@ Global Symbols
 <LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Data_Storage_Task
 </UL>
 
-<P><STRONG><a name="[be]"></a>convert_hex_to_float</STRONG> (Thumb, 46 bytes, Stack size 24 bytes, main.o(i.convert_hex_to_float))
+<P><STRONG><a name="[bf]"></a>convert_hex_to_float</STRONG> (Thumb, 46 bytes, Stack size 24 bytes, main.o(i.convert_hex_to_float))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = convert_hex_to_float
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortExitCritical
@@ -2394,7 +2444,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = edit_mode &rArr; ssd1306_WriteString &rArr; ssd1306_WriteChar &rArr; ssd1306_DrawPixel
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_WriteString
-<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
 <LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dsub
 <LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
 <LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
@@ -2408,7 +2458,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = edit_mode_from_list &rArr; __hardfp_modf &rArr; __aeabi_dsub &rArr; __aeabi_dadd &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_WriteString
-<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
 <LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
 <LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
 <LI><a href="#[175]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_modf
@@ -2437,10 +2487,10 @@ Global Symbols
 <LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskSwitchContext
 </UL>
 
-<P><STRONG><a name="[c7]"></a>init_menu</STRONG> (Thumb, 224 bytes, Stack size 24 bytes, freertos.o(i.init_menu))
+<P><STRONG><a name="[c7]"></a>init_menu</STRONG> (Thumb, 176 bytes, Stack size 24 bytes, freertos.o(i.init_menu))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = init_menu
 </UL>
-<BR>[Calls]<UL><LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_ReadPin
+<BR>[Calls]<UL><LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_ReadPin
 </UL>
 <BR>[Called By]<UL><LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;save_settings
 <LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Task
@@ -2562,12 +2612,12 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_init_settings
 </UL>
 
-<P><STRONG><a name="[c5]"></a>read_init_settings</STRONG> (Thumb, 572 bytes, Stack size 16 bytes, main.o(i.read_init_settings))
+<P><STRONG><a name="[c5]"></a>read_init_settings</STRONG> (Thumb, 586 bytes, Stack size 16 bytes, main.o(i.read_init_settings))
 <BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = read_init_settings &rArr; read_registers_from_flash &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[19e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_registers_from_flash
 <LI><a href="#[19f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_flash
-<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;convert_hex_to_float
+<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;convert_hex_to_float
 </UL>
 <BR>[Called By]<UL><LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Data_Storage_Task
 <LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
@@ -2583,7 +2633,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_init_settings
 </UL>
 
-<P><STRONG><a name="[d2]"></a>save_settings</STRONG> (Thumb, 430 bytes, Stack size 32 bytes, freertos.o(i.save_settings))
+<P><STRONG><a name="[d2]"></a>save_settings</STRONG> (Thumb, 420 bytes, Stack size 32 bytes, freertos.o(i.save_settings))
 <BR><BR>[Stack]<UL><LI>Max Depth = 176<LI>Call Chain = save_settings &rArr; write_registers_to_flash &rArr; write_flash &rArr; HAL_FLASH_Program &rArr; FLASH_WaitForLastOperation
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_registers_to_flash
@@ -2721,8 +2771,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Task
 </UL>
 
-<P><STRONG><a name="[bc]"></a>turnover_counter</STRONG> (Thumb, 378 bytes, Stack size 40 bytes, freertos.o(i.turnover_counter))
-<BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = turnover_counter &rArr; __aeabi_ul2f &rArr; _float_epilogue
+<P><STRONG><a name="[bd]"></a>turnover_counter</STRONG> (Thumb, 342 bytes, Stack size 56 bytes, freertos.o(i.turnover_counter))
+<BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = turnover_counter &rArr; __aeabi_ul2f &rArr; _float_epilogue
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_mean_f32
 <LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ul2f
@@ -2813,7 +2863,7 @@ Global Symbols
 <LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
 <LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;save_settings
 <LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Data_Storage_Task
-<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;convert_hex_to_float
+<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;convert_hex_to_float
 <LI><a href="#[1b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCheckForTimeOut
 <LI><a href="#[1b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReset
 <LI><a href="#[197]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvUnlockQueue
@@ -2832,7 +2882,7 @@ Global Symbols
 <LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
 <LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;save_settings
 <LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Data_Storage_Task
-<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;convert_hex_to_float
+<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;convert_hex_to_float
 <LI><a href="#[1b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCheckForTimeOut
 <LI><a href="#[1b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReset
 <LI><a href="#[197]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvUnlockQueue

@@ -111,6 +111,7 @@ extern float32_t lo_warning_icp;
 extern float32_t hi_warning_icp;
 extern float32_t lo_emerg_icp;
 extern float32_t hi_emerg_icp;
+extern float32_t sensor_coef;
 extern float32_t icp_coef_K;
 extern float32_t icp_coef_B;
 extern float32_t range_icp;
@@ -488,6 +489,7 @@ void read_init_settings(void)
 	lo_emerg_icp = convert_hex_to_float(&settings[0], 6); 
 	hi_emerg_icp = convert_hex_to_float(&settings[0], 8); 
 	break_level_icp = convert_hex_to_float(&settings[0], 11); 	
+	sensor_coef = convert_hex_to_float(&settings[0], 13);
 	icp_coef_K = convert_hex_to_float(&settings[0], 15); 
 	icp_coef_B = convert_hex_to_float(&settings[0], 17); 
 	filter_mode_icp = settings[19];

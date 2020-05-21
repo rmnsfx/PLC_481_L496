@@ -181,6 +181,7 @@ float32_t pStates_main_high_4_20[8];
 
 int16_t settings[REG_COUNT]; //Settings array 
 int16_t mirror_values[MIRROR_COUNT]; 
+volatile uint8_t bit_field[BIT_FIELD_COUNT];
 
 uint8_t button_state = 0;
 
@@ -217,6 +218,7 @@ float32_t rms_acceleration_icp = 0.0;
 float32_t rms_velocity_icp = 0.0;
 float32_t rms_displacement_icp = 0.0;
 
+float32_t sensor_coef = 0.0;
 float32_t icp_coef_K = 0.0;
 float32_t icp_coef_B = 0.0;
 
@@ -300,9 +302,9 @@ uint16_t trigger_485_ZSK_percent_prev = 0;
 uint64_t ZSK_trigger_array[ZSK_REG_485_QTY];
 uint64_t ZSK_trigger_array_previous[ZSK_REG_485_QTY];
 
-volatile int x_axis = 0;
-volatile int y_axis = 0; 
-volatile int z_axis = 0;
+int16_t x_axis = 0;
+int16_t y_axis = 0; 
+int16_t z_axis = 0;
 
 //Реле
 uint8_t state_emerg_relay = 0;
@@ -390,8 +392,8 @@ uint16_t channel_ICP_ON = 0;
 uint16_t channel_4_20_ON = 0;
 uint16_t channel_485_ON = 0;
 
-volatile int temp_var_1 = 0;
-volatile int temp_var_2 = 0;
+int temp_var_1 = 0;
+int temp_var_2 = 0;
 
 extern uint16_t timer_485_counter;
 
@@ -409,7 +411,7 @@ double intpart;
 char buffer[64];
 uint8_t config_mode = 0; 
 
-volatile uint16_t number_of_items_in_the_menu = 0;
+uint16_t number_of_items_in_the_menu = 0;
 const uint8_t items_menu_icp = 1;
 const uint8_t items_menu_4_20 = 2; 
 const uint8_t items_menu_485 = 3;
@@ -436,17 +438,17 @@ float64_t integrator_summa_D = 0.0;
 uint8_t old_turnover_front = 0;
 xQueueHandle queue_TOC;
 uint16_t queue_count_TOC;
-volatile float32_t turnover_count_1s = 0.0;		
-volatile float32_t turnover_count_60s = 0.0;
-volatile uint16_t pass_count = 0;
-volatile uint8_t turnover_front = 0;	
-volatile uint64_t big_points_counter = 0;
-volatile uint64_t small_points_counter = 0;
-volatile uint64_t difference_points_counter = 0;
-volatile float32_t common_level_TOC = 0.0;
-volatile float32_t mean_level_TOC = 0.0;
-volatile float32_t level_summa_TOC = 0.0;
-volatile float32_t turnover_summa[TOC_QUEUE_LENGHT];
+float32_t turnover_count_1s = 0.0;		
+float32_t turnover_count_60s = 0.0;
+uint16_t pass_count = 0;
+uint8_t turnover_front = 0;	
+uint64_t big_points_counter = 0;
+uint64_t small_points_counter = 0;
+uint64_t difference_points_counter = 0;
+float32_t common_level_TOC = 0.0;
+float32_t mean_level_TOC = 0.0;
+float32_t level_summa_TOC = 0.0;
+float32_t turnover_summa[TOC_QUEUE_LENGHT];
 uint16_t summa_iter = 0;
 uint16_t impulse_sign = 0;
 uint16_t hysteresis_TOC = 0;
@@ -457,35 +459,36 @@ uint8_t QUEUE_LENGHT = 32;
 
 uint8_t quit_relay_button = 0;
 
-volatile uint8_t disable_up_down_button = 0; //Flag denied up and down button
-volatile uint8_t disable_left_right_button = 0; 
+uint8_t disable_up_down_button = 0; //Flag denied up and down button
+uint8_t disable_left_right_button = 0; 
 
-volatile uint8_t adc_bunch = 0; //Index half buffer ADC
+uint8_t adc_bunch = 0; //Index half buffer ADC
 
-volatile uint16_t bunch_count_1 = 0;
-volatile uint16_t bunch_count_2 = 0;
+uint16_t bunch_count_1 = 0;
+uint16_t bunch_count_2 = 0;
 
-volatile uint32_t byte_size = 0;
-volatile uint16_t crc_data = 0;
-volatile uint16_t byte_bunch = 0;
-volatile uint32_t byte_counter = 0;
-volatile uint16_t crc_flash = 0;
-volatile uint64_t data = 0;
+uint32_t byte_size = 0;
+uint16_t crc_data = 0;
+uint16_t byte_bunch = 0;
+uint32_t byte_counter = 0;
+uint16_t crc_flash = 0;
+uint64_t data = 0;
 uint8_t error_crc = 0;
-volatile uint8_t worker_status = 0;
-volatile uint8_t status = 0;
-volatile uint8_t status1 = 0;
-volatile uint8_t status2 = 0;
-volatile uint8_t status3 = 0;
+uint8_t worker_status = 0;
+uint8_t status = 0;
+uint8_t status1 = 0;
+uint8_t status2 = 0;
+uint8_t status3 = 0;
 
 uint16_t size_moving_average_ZSK;
 volatile float32_t* zsk_average_array[ZSK_REG_485_QTY]; 
 float32_t average_result = 0.0;
 
 //volatile uint16_t reg_lost_packet = 0;
-volatile uint16_t reg_lost_packet[REG_485_QTY];
+uint16_t reg_lost_packet[REG_485_QTY];
 
-
+uint8_t event_bit_flag1 = 0;
+uint8_t event_bit_flag2 = 0;
 
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
@@ -927,10 +930,16 @@ void Acceleration_Task(void const * argument)
 		xQueueSend(acceleration_queue_icp, (void*)&temp_rms_acceleration_icp, 0);				
 		xQueueSend(queue_4_20, (void*)&temp_mean_acceleration_4_20, 0);		
 		
-//		xQueueSend(acceleration_peak_queue_icp, (void*)&temp_max_acceleration_icp, 0);				
-//		xQueueSend(acceleration_2peak_queue_icp, (void*)&temp_min_acceleration_icp, 0);
-		max_acceleration_icp = temp_max_acceleration_icp * icp_coef_K + icp_coef_B;
-		min_acceleration_icp = temp_min_acceleration_icp * icp_coef_K + icp_coef_B;
+
+//		max_acceleration_icp = temp_max_acceleration_icp * icp_coef_K  + icp_coef_B;
+//		min_acceleration_icp = temp_min_acceleration_icp * icp_coef_K  + icp_coef_B;
+
+		max_acceleration_icp = (temp_max_acceleration_icp * COEF_TRANSFORM_VOLT) * icp_coef_K  + icp_coef_B;
+		min_acceleration_icp = (temp_min_acceleration_icp * COEF_TRANSFORM_VOLT) * icp_coef_K  + icp_coef_B;
+		
+		max_acceleration_icp = max_acceleration_icp / (sensor_coef / 1000);
+		min_acceleration_icp = min_acceleration_icp / (sensor_coef / 1000);
+		
 
 		xQueueSend(queue_peak_4_20, (void*)&temp_max_acceleration_4_20, 0);				
 		xQueueSend(queue_2peak_4_20, (void*)&temp_min_acceleration_4_20, 0);
@@ -1005,10 +1014,17 @@ void Velocity_Task(void const * argument)
 		
 		xQueueSend(velocity_queue_icp, (void*)&temp_rms_velocity_icp, 0);	
 
-//		xQueueSend(velocity_peak_queue_icp, (void*)&temp_max_velocity_icp, 0);	
-//		xQueueSend(velocity_2peak_queue_icp, (void*)&temp_min_velocity_icp, 0);	
-		max_velocity_icp = (float32_t) (temp_max_velocity_icp * icp_coef_K + icp_coef_B);
-		min_velocity_icp = (float32_t) (temp_min_velocity_icp * icp_coef_K + icp_coef_B);
+
+//		max_velocity_icp = (float32_t) (temp_max_velocity_icp * icp_coef_K + icp_coef_B);
+//		min_velocity_icp = (float32_t) (temp_min_velocity_icp * icp_coef_K + icp_coef_B);
+
+		max_velocity_icp = (temp_max_velocity_icp * COEF_TRANSFORM_VOLT) * icp_coef_K  + icp_coef_B;
+		min_velocity_icp = (temp_min_velocity_icp * COEF_TRANSFORM_VOLT) * icp_coef_K  + icp_coef_B;
+		
+		max_velocity_icp = max_velocity_icp / (sensor_coef / 1000);
+		min_velocity_icp = min_velocity_icp / (sensor_coef / 1000);
+		
+		
 		
 		xSemaphoreGive( Semaphore_Displacement );
 		xSemaphoreGive( Q_Semaphore_Velocity );		
@@ -1060,10 +1076,17 @@ void Displacement_Task(void const * argument)
 								
 		xQueueSend(displacement_queue_icp, (void*)&temp_rms_displacement_icp, 0);
 		
-//		xQueueSend(displacement_peak_queue_icp, (void*)&temp_max_displacement_icp, 0);
-//		xQueueSend(displacement_2peak_queue_icp, (void*)&temp_min_displacement_icp, 0);		
-		max_displacement_icp = (float32_t) (temp_max_displacement_icp  * icp_coef_K + icp_coef_B);
-		min_displacement_icp = (float32_t) (temp_min_displacement_icp * icp_coef_K + icp_coef_B);
+
+//		max_displacement_icp = (float32_t) (temp_max_displacement_icp  * icp_coef_K + icp_coef_B);
+//		min_displacement_icp = (float32_t) (temp_min_displacement_icp * icp_coef_K + icp_coef_B);
+
+		max_displacement_icp = (temp_max_displacement_icp * COEF_TRANSFORM_VOLT) * icp_coef_K  + icp_coef_B;
+		min_displacement_icp = (temp_min_displacement_icp * COEF_TRANSFORM_VOLT) * icp_coef_K  + icp_coef_B;
+		
+		max_displacement_icp = max_displacement_icp / (sensor_coef / 1000);
+		min_displacement_icp = min_displacement_icp / (sensor_coef / 1000);
+		
+		
 		
 		xSemaphoreGive( Q_Semaphore_Displacement );
 		
@@ -1101,25 +1124,15 @@ void Q_Average_A(void const * argument)
 					
 					arm_rms_f32( Q_A_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_acceleration_icp);	
 					
-					icp_voltage  = rms_acceleration_icp * COEF_TRANSFORM_VOLT;
+					//Расчет переменного напряжения 
+					icp_voltage = (rms_acceleration_icp * COEF_TRANSFORM_VOLT) * icp_coef_K + icp_coef_B;					
+
+					//Расчет ускорения из напряжения
+					//rms_acceleration_icp = icp_voltage * icp_coef_K + icp_coef_B;
 					
+					//Применеяем коэф. датчика
+					rms_acceleration_icp = icp_voltage / (sensor_coef / 1000);
 					
-					//rms_acceleration_icp = (float32_t) COEF_TRANSFORM_icp_acceleration * icp_voltage;
-					//rms_acceleration_icp = (float32_t) (icp_range_volt / icp_range_a) * icp_voltage;
-					rms_acceleration_icp = rms_acceleration_icp * icp_coef_K + icp_coef_B;
-					
-					
-//					max_acceleration_icp = 0.0;
-//					min_acceleration_icp = 0.0;
-//					for (uint16_t i=0; i<QUEUE_LENGHT; i++)
-//					{
-//							xQueueReceive(acceleration_peak_queue_icp, (void *) &Q_A_peak_array_icp[i], 0);										
-//							xQueueReceive(acceleration_2peak_queue_icp, (void *) &Q_A_2peak_array_icp[i], 0);										
-//					}
-//					arm_max_f32( (float32_t*)&Q_A_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_acceleration_icp, &index );
-//					arm_min_f32( (float32_t*)&Q_A_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_acceleration_icp, &index );
-//					max_acceleration_icp = max_acceleration_icp * icp_coef_K + icp_coef_B;
-//					min_acceleration_icp = min_acceleration_icp * icp_coef_K + icp_coef_B;
 			}
 				
 				
@@ -1192,26 +1205,16 @@ void Q_Average_V(void const * argument)
 					arm_rms_f32( Q_V_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_velocity_icp );
 										
 						
-					rms_velocity_icp = (float32_t) (rms_velocity_icp * icp_coef_K + icp_coef_B);		
+					rms_velocity_icp = (rms_velocity_icp * COEF_TRANSFORM_VOLT) * icp_coef_K + icp_coef_B;		
+					
+					//Применеяем коэф. датчика
+					rms_velocity_icp /= (sensor_coef / 1000);
+					
 
-					//Calculation of the difference between the passage
+					//Calculation of the difference between the passage / Время между проходами цикла /
 					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
-					xTimeBefore = xTaskGetTickCount();	
-										
-			
-			
-			
-//					max_velocity_icp = 0.0;
-//					min_velocity_icp = 0.0;
-//					for (uint16_t i=0; i<QUEUE_LENGHT; i++)
-//					{
-//							xQueueReceive(velocity_peak_queue_icp, (void *) &Q_V_peak_array_icp[i], 0);										
-//							xQueueReceive(velocity_2peak_queue_icp, (void *) &Q_V_2peak_array_icp[i], 0);										
-//					}
-//					arm_max_f32( (float32_t*)&Q_V_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_velocity_icp, &index );
-//					arm_min_f32( (float32_t*)&Q_V_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_velocity_icp, &index );
-//					max_velocity_icp = (float32_t) (max_velocity_icp * icp_coef_K + icp_coef_B);
-//					min_velocity_icp = (float32_t) (min_velocity_icp * icp_coef_K + icp_coef_B);
+					xTimeBefore = xTaskGetTickCount();								
+
 			}
 
   }
@@ -1247,21 +1250,11 @@ void Q_Average_D(void const * argument)
 					
 					arm_rms_f32( Q_D_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_displacement_icp );
 
-					rms_displacement_icp = (float32_t) (rms_displacement_icp * icp_coef_K + icp_coef_B);					
-			 
+					rms_displacement_icp = (rms_displacement_icp * COEF_TRANSFORM_VOLT) * icp_coef_K + icp_coef_B;							 
+					
+					//Применеяем коэф. датчика
+					rms_displacement_icp /= (sensor_coef / 1000);
 
-
-//					max_displacement_icp = 0.0;
-//					min_displacement_icp = 0.0;
-//					for (uint16_t i=0; i<QUEUE_LENGHT; i++)
-//					{
-//							xQueueReceive(displacement_peak_queue_icp, (void *) &Q_D_peak_array_icp[i], 0);										
-//							xQueueReceive(displacement_2peak_queue_icp, (void *) &Q_D_2peak_array_icp[i], 0);										
-//					}
-//					arm_max_f32( (float32_t*)&Q_D_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_displacement_icp, &index );
-//					arm_min_f32( (float32_t*)&Q_D_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_displacement_icp, &index );
-//					max_displacement_icp = (float32_t) (max_displacement_icp  * icp_coef_K + icp_coef_B);
-//					min_displacement_icp = (float32_t) (min_displacement_icp * icp_coef_K + icp_coef_B);
 			}
   }
   /* USER CODE END Q_Average_D */
@@ -1539,7 +1532,7 @@ void Display_Task(void const * argument)
 						else horizont_menu_lenght = 4;	
 					}
 					
-					if (menu_index_pointer == 5) horizont_menu_lenght = 4; //Settings
+					if (menu_index_pointer == 5) horizont_menu_lenght = 5; //Settings
 					if (menu_index_pointer == 6) horizont_menu_lenght = 3; //Информация
 					if (menu_index_pointer == 7) horizont_menu_lenght = 3; //Конфигурация
 					
@@ -3453,9 +3446,42 @@ void Display_Task(void const * argument)
 						//ssd1306_UpdateScreen();				
 					}						
 					
+					if (menu_index_pointer == 5 && menu_horizontal == 3) //Скорость обмена (шинный соединитель)
+					{
+						ssd1306_Fill(0);
+						ssd1306_SetCursor(0,0);												
+						ssd1306_WriteString("Настр",font_8x15_RU,1);																
+						ssd1306_WriteString(".",font_8x14,1);					
+
+						triangle_left(55,0);
+						triangle_right(60,0);
+						//triangle_up(58,38);
+						//triangle_down(58,43);
+						
+						ssd1306_SetCursor(0,15);
+						strncpy(msg,"Скорость шина", 13);						
+						string_scroll(msg, 13);
+						
+						ssd1306_SetCursor(0,32);						
+						if (menu_edit_mode == 1) //Режим редактирования
+						{
+							edit_mode_from_list(&baud_rate_uart_3, (uint32_t*)&baudrate_array);
+							disable_up_down_button = 0;
+							disable_left_right_button = 1;
+						}
+						else 
+						{
+							snprintf(buffer, sizeof buffer, "%.00f", baud_rate_uart_3);			
+							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+							disable_up_down_button = 1;
+							disable_left_right_button = 0;
+						}
+												
+						//ssd1306_UpdateScreen();				
+					}						
 									
 					
-					if (menu_index_pointer == 5 && menu_horizontal == 3) //Время прогрева
+					if (menu_index_pointer == 5 && menu_horizontal == 4) //Время прогрева
 					{
 						ssd1306_Fill(0);
 						ssd1306_SetCursor(0,0);												
@@ -3489,7 +3515,7 @@ void Display_Task(void const * argument)
 						//ssd1306_UpdateScreen();				
 					}		
 					
-					if (menu_index_pointer == 5 && menu_horizontal == 4) //Сброс настроек 
+					if (menu_index_pointer == 5 && menu_horizontal == 5) //Сброс настроек 
 					{
 						ssd1306_Fill(0);
 						ssd1306_SetCursor(0,0);												
@@ -4031,14 +4057,23 @@ void Modbus_Transmit_Task(void const * argument)
 												}												
 											}
 											
-											if (adr_of_registers > 1080)	
+											if (adr_of_registers > 1080 && adr_of_registers < 1198)	
 											{
 												for (uint16_t i=0, j=0; i < MIRROR_COUNT; i++, j++)
 												{
 													transmitBuffer[j*2+3] = 0; //значение регистра Lo 		
 													transmitBuffer[j*2+4] = 0; //значение регистра Hi		
 												}												
-											}												
+											}								
+
+											if ( adr_of_registers > (BIT_FIELD_START_ADR-2) )	
+											{
+												for (uint16_t i=0, j=0; i < BIT_FIELD_COUNT; i++, j++)
+												{
+													transmitBuffer[j*2+3] = bit_field[i] >> 8; //значение регистра Lo 		
+													transmitBuffer[j*2+4] = bit_field[i] & 0x00FF; //значение регистра Hi		
+												}												
+											}														
 									
 											crc = crc16(transmitBuffer, count_registers*2+3);				
 									
@@ -4121,28 +4156,6 @@ void Modbus_Transmit_Task(void const * argument)
 						
 				}
 				
-//				//Команда для перепрошивки
-//				if (receiveBuffer[1] == 0x62 && receiveBuffer[2] == 0x6F && receiveBuffer[3] == 0x6F && receiveBuffer[4] == 0x74)
-//				{					
-//					
-//					transmitBuffer[0] = 0x72;
-//					transmitBuffer[1] = 0x65;
-//					transmitBuffer[2] = 0x61;
-//					transmitBuffer[3] = 0x64;
-//					transmitBuffer[4] = 0x79;
-//										
-//					HAL_UART_Transmit_DMA(&huart2, transmitBuffer, 5);
-//					
-//					bootloader_state = 1;		
-//					
-//					JumpToApplication(BOOT_START_ADDRESS);
-//					//rtc_write_backup_reg(1, bootloader_state);					
-//					//NVIC_SystemReset();
-//					
-//					//receiveBuffer[1] = 0x00; boot_receiveBuffer[1] = 0x00;
-//					
-//				}
-//				else bootloader_state = 0;
 		}   
   }
   /* USER CODE END Modbus_Transmit_Task */
@@ -4296,7 +4309,7 @@ void Master_Modbus_Transmit(void const * argument)
 
 		xTask18 = xTaskGetCurrentTaskHandle();	
 		
-		for(uint8_t i=0; i< REG_485_QTY; i++)
+		for(volatile uint8_t i=0; i< REG_485_QTY; i++)
 		{	
 			
 				if ( master_array[i].master_on == 1) //Если регистр выключен, то запрашиваем следующий		
@@ -4490,32 +4503,6 @@ void Data_Storage_Task(void const * argument)
 		if (menu_edit_mode == 0)
 		for (uint16_t i = 0; i < REG_485_QTY; i++)
 		{			
-						
-//				if (warming_flag == 0)
-//				if (channel_485_ON == 2) //Специальный режим работы для системы ЗСК	
-//				if(MOVING_AVERAGE == 1) //Расчитываем скользящее среднее и перезаписываем значение с учетом усреднения (ЗСК)		
-//				if (i < 15) //Усредняем только вибропараметры
-//				{												
-//						average_result = 0.0;																	
-//					
-//						//Сдвигаем массив для записи нового элемента
-//						for (int y = 1; y < size_moving_average_ZSK; y++)				
-//						{
-//								zsk_average_array[i][y-1] = zsk_average_array[i][y];
-//						}						
-//						
-//						//Записываем новое значение 						
-//						zsk_average_array[i][size_moving_average_ZSK - 1] = master_array[i].master_value;
-//						
-//						//Расчитываем среднее
-//						for (int j = 0; j < size_moving_average_ZSK; j++)				
-//						{
-//								average_result += zsk_average_array[i][j] / size_moving_average_ZSK;							
-//						}
-//						
-//						master_array[i].master_value = average_result;
-//				}			
-			
 			
 				master_array[i].master_on = settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 0];
 				master_array[i].master_addr = settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 1];
@@ -4580,8 +4567,7 @@ void Data_Storage_Task(void const * argument)
 			
 			init_menu(0);
 			FilterInit();
-								
-			//NVIC_SystemReset();			
+
 		}
 
 		
@@ -4592,6 +4578,9 @@ void Data_Storage_Task(void const * argument)
 						
 			settings[107] = 0x00;			
 
+			convert_float_and_swap(sensor_coef, &temp[0]);			
+			settings[13] = temp[0];  
+			settings[14] = temp[1];			
 			convert_float_and_swap(icp_coef_K, &temp[0]);			
 			settings[15] = temp[0];  
 			settings[16] = temp[1];			
@@ -4623,9 +4612,8 @@ void Data_Storage_Task(void const * argument)
 			
 			init_menu(0);
 			FilterInit();
-			
-			//xSemaphoreGive( Mutex_Setting );			
-			//NVIC_SystemReset();			
+		
+	
 		}
 		
 		//Сброс настроек
@@ -4635,9 +4623,14 @@ void Data_Storage_Task(void const * argument)
 			
 			for(uint16_t i=0; i< REG_COUNT; i++) 
 			{
-				if ( 	i == 15 || i == 17 || 
-							i == 51 || i == 53 ||
-							i == 90 || i == 92 )
+				if ( 	
+							i == 13 || i == 14 ||
+							i == 15 || i == 16 || 
+							i == 17 || i == 18 ||
+							i == 51 || i == 52 ||			
+							i == 53 || i == 54 ||
+							i == 90 || i == 91 ||
+							i == 92 || i == 93 )
 				{				
 					settings[i] = settings[i];			
 				}
@@ -4821,7 +4814,9 @@ void TriggerLogic_Task(void const * argument)
 				//Источник сигнала 485 (Modbus)
 				if (channel_485_ON == 1)
 				{		
-
+						event_bit_flag1 = 0;
+						event_bit_flag2 = 0;
+					
 						for (uint8_t i = 0; i< REG_485_QTY; i++)
 						{
 								if (master_array[i].master_on == 1)
@@ -4833,16 +4828,19 @@ void TriggerLogic_Task(void const * argument)
 											master_delay_relay_array[i].flag_delay_relay_1 = 1;
 											
 											if (master_delay_relay_array[i].relay_permission_1 == 1)
-											{
-												trigger_485_event_attribute_warning |= (1<<(15-i));								
+											{												
+												event_bit_flag1 = 1;												
+												bit_field[i*2] = 1; //Set warning bit to array of state
+												
 												state_warning_relay = 1;
 												flag_for_delay_relay_exit = 1;							
 												xSemaphoreGive( Semaphore_Relay_1 );							
 											}
 										}	
 										else if (master_array[i].master_value < master_array[i].master_warning_set || master_array[i].master_value > master_array[i].low_master_warning_set) 						
-										{
-											if (mode_relay == 0) trigger_485_event_attribute_warning &= ~(1<<(15-i));								
+										{											
+
+											if (mode_relay == 0) bit_field[i*2] = 0; //Reset bit to array of state											
 
 											master_delay_relay_array[i].timer_delay_relay_1 = 0;
 											master_delay_relay_array[i].relay_permission_1 = 0;	
@@ -4855,22 +4853,29 @@ void TriggerLogic_Task(void const * argument)
 											master_delay_relay_array[i].flag_delay_relay_2 = 1;
 											
 											if (master_delay_relay_array[i].relay_permission_2 == 1)
-											{
-												trigger_485_event_attribute_emerg |= (1<<(15-i));																			
+											{												
+												event_bit_flag2 = 1;												
+												bit_field[i*2 + 1] = 1; //Set emergency bit to array of state
+												
 												state_emerg_relay = 1;
 												flag_for_delay_relay_exit = 1;							
 												xSemaphoreGive( Semaphore_Relay_2 );							
 											}
 										}	
 										else if (master_array[i].master_value < master_array[i].master_emergency_set || master_array[i].master_value > master_array[i].low_master_emergency_set)						
-										{
-											if (mode_relay == 0) trigger_485_event_attribute_emerg &= ~(1<<(15-i));		
+										{											
+											if (mode_relay == 0) bit_field[i*2 + 1] = 0; //Reset emergency bit to array of state
 
 											master_delay_relay_array[i].timer_delay_relay_2 = 0;
 											master_delay_relay_array[i].relay_permission_2 = 0;	
 											master_delay_relay_array[i].flag_delay_relay_2 = 0; 											
-										}										
+										}					
+
+										if (event_bit_flag1 == 1) trigger_event_attribute |= (1<<11);											
+										else if (mode_relay == 0) trigger_event_attribute &= ~(1<<11);		
 										
+										if (event_bit_flag2 == 1) trigger_event_attribute |= (1<<10);											
+										else if (mode_relay == 0) trigger_event_attribute &= ~(1<<10);										
 
 								}
 						}		
@@ -4879,13 +4884,9 @@ void TriggerLogic_Task(void const * argument)
 				
 				
 				if (channel_485_ON == 2) //Специальный режим работы для системы ЗСК
-				{
-					
-					
-					
+				{	
 						for (uint16_t i = 0; i < REG_485_QTY; i++)
-						{			
-										
+						{													
 								if (warming_flag == 0)								
 								if(MOVING_AVERAGE == 1) //Расчитываем скользящее среднее и перезаписываем значение с учетом усреднения (ЗСК)		
 								if (i < 15) //Усредняем только вибропараметры
@@ -4909,8 +4910,7 @@ void TriggerLogic_Task(void const * argument)
 										
 										master_array[i].master_value = average_result;
 								}
-						}						
-					
+						}			
 					
 						//Заморозка битов состояния, если была сработка 						
 						//if( (state_emerg_relay == 0) && (trigger_485_ZSK_percent < 99) && (trigger_485_ZSK < 0xC00) )												
@@ -4919,14 +4919,11 @@ void TriggerLogic_Task(void const * argument)
 							trigger_485_ZSK_percent = 0;
 						}
 					
-
-					
 						if (state_emerg_relay == 0)
 						for (uint8_t i = 0; i < ZSK_REG_485_QTY; i++)
 						{
 								if (master_array[i].master_on == 1) 
 								{			
-
 									
 										if ((i >= 0) && (i < 15)) //Регистры с вибропараметрами
 										{
@@ -4940,7 +4937,6 @@ void TriggerLogic_Task(void const * argument)
 													if (i == 9 || i == 10 || i == 11) trigger_485_ZSK |= (1<<3);
 													if (i == 12 || i == 13 || i == 14) trigger_485_ZSK |= (1<<4);	
 												}
-														
 												
 												//Предупредительная уставка											
 												if (master_array[i].master_value >= master_array[i].master_warning_set) 
@@ -5167,6 +5163,7 @@ void TriggerLogic_Task(void const * argument)
 						if(break_sensor_485 == 1) 
 						{
 							state_emerg_relay = 1;							
+							trigger_485_ZSK_percent = 100;
 							xSemaphoreGive( Semaphore_Relay_2 );							
 						}
 						
@@ -5200,6 +5197,7 @@ void TriggerLogic_Task(void const * argument)
 			state_emerg_relay = 1;
 			osDelay(20000);
 			test_relay = 0;
+			trigger_485_ZSK_percent = 100;
 		}
 		
 		//Квитирование
@@ -5214,8 +5212,7 @@ void TriggerLogic_Task(void const * argument)
 			trigger_event_attribute = 0;
 			trigger_485_event_attribute_warning = 0;
 			trigger_485_event_attribute_emerg = 0;			
-			
-			
+						
 			settings[96] = 0;
 			
 			if (menu_horizontal == 0) 
@@ -6283,9 +6280,9 @@ void save_settings(void)
 			
 			
 			//settings[64] = slave_adr_mb_master;				
-			convert_float_and_swap(baud_rate_uart_3, &temp[0]);
-			settings[65] = temp[0];
-			settings[66] = temp[1];										
+			//convert_float_and_swap(baud_rate_uart_3, &temp[0]);
+			//settings[65] = temp[0];
+			//settings[66] = temp[1];										
 			//settings[68] = slave_reg_mb_master;					
 			//settings[70] = slave_func_mb_master;
 			//settings[71] = quantity_reg_mb_master;
@@ -6297,7 +6294,10 @@ void save_settings(void)
 			settings[100] = slave_adr;
 			convert_float_and_swap(baud_rate_uart_2, &temp[0]);
 			settings[101] = temp[0];
-			settings[102] = temp[1];										
+			settings[102] = temp[1];						
+			convert_float_and_swap(baud_rate_uart_3, &temp[0]);
+			settings[68] = temp[0];
+			settings[69] = temp[1];	
 			settings[109] = warming_up;
 			
 			settings[28] = channel_ICP_ON;
@@ -6315,11 +6315,11 @@ void save_settings(void)
 	
 			ssd1306_Fill(0);
 			ssd1306_SetCursor(0,0);												
-			ssd1306_WriteString("Настр",font_8x15_RU,1);																												
-			ssd1306_WriteString(".",font_8x14,1);	
+			ssd1306_WriteString("Сохра",font_8x15_RU,1);																												
+			ssd1306_WriteString("-",font_8x14,1);	
 			ssd1306_SetCursor(0,15);	
-			ssd1306_WriteString("сохр",font_8x15_RU,1);																																		
-			ssd1306_WriteString(".",font_8x14,1);	
+			ssd1306_WriteString("нено",font_8x15_RU,1);																																		
+			//ssd1306_WriteString(".",font_8x14,1);	
 			ssd1306_UpdateScreen();			
 			osDelay(2000);	
 	
