@@ -4567,8 +4567,7 @@ void Data_Storage_Task(void const * argument)
 			
 			init_menu(0);
 			FilterInit();
-								
-			//NVIC_SystemReset();			
+
 		}
 
 		
@@ -4579,6 +4578,9 @@ void Data_Storage_Task(void const * argument)
 						
 			settings[107] = 0x00;			
 
+			convert_float_and_swap(sensor_coef, &temp[0]);			
+			settings[13] = temp[0];  
+			settings[14] = temp[1];			
 			convert_float_and_swap(icp_coef_K, &temp[0]);			
 			settings[15] = temp[0];  
 			settings[16] = temp[1];			
@@ -4610,9 +4612,8 @@ void Data_Storage_Task(void const * argument)
 			
 			init_menu(0);
 			FilterInit();
-			
-			//xSemaphoreGive( Mutex_Setting );			
-			//NVIC_SystemReset();			
+		
+	
 		}
 		
 		//Сброс настроек
@@ -4622,9 +4623,14 @@ void Data_Storage_Task(void const * argument)
 			
 			for(uint16_t i=0; i< REG_COUNT; i++) 
 			{
-				if ( 	i == 15 || i == 17 || 
-							i == 51 || i == 53 ||
-							i == 90 || i == 92 )
+				if ( 	
+							i == 13 || i == 14 ||
+							i == 15 || i == 16 || 
+							i == 17 || i == 18 ||
+							i == 51 || i == 52 ||			
+							i == 53 || i == 54 ||
+							i == 90 || i == 91 ||
+							i == 92 || i == 93 )
 				{				
 					settings[i] = settings[i];			
 				}
@@ -6274,9 +6280,9 @@ void save_settings(void)
 			
 			
 			//settings[64] = slave_adr_mb_master;				
-			convert_float_and_swap(baud_rate_uart_3, &temp[0]);
-			settings[65] = temp[0];
-			settings[66] = temp[1];										
+			//convert_float_and_swap(baud_rate_uart_3, &temp[0]);
+			//settings[65] = temp[0];
+			//settings[66] = temp[1];										
 			//settings[68] = slave_reg_mb_master;					
 			//settings[70] = slave_func_mb_master;
 			//settings[71] = quantity_reg_mb_master;
@@ -6288,7 +6294,10 @@ void save_settings(void)
 			settings[100] = slave_adr;
 			convert_float_and_swap(baud_rate_uart_2, &temp[0]);
 			settings[101] = temp[0];
-			settings[102] = temp[1];										
+			settings[102] = temp[1];						
+			convert_float_and_swap(baud_rate_uart_3, &temp[0]);
+			settings[68] = temp[0];
+			settings[69] = temp[1];	
 			settings[109] = warming_up;
 			
 			settings[28] = channel_ICP_ON;
@@ -6306,11 +6315,11 @@ void save_settings(void)
 	
 			ssd1306_Fill(0);
 			ssd1306_SetCursor(0,0);												
-			ssd1306_WriteString("Настр",font_8x15_RU,1);																												
-			ssd1306_WriteString(".",font_8x14,1);	
+			ssd1306_WriteString("Сохра",font_8x15_RU,1);																												
+			ssd1306_WriteString("-",font_8x14,1);	
 			ssd1306_SetCursor(0,15);	
-			ssd1306_WriteString("сохр",font_8x15_RU,1);																																		
-			ssd1306_WriteString(".",font_8x14,1);	
+			ssd1306_WriteString("нено",font_8x15_RU,1);																																		
+			//ssd1306_WriteString(".",font_8x14,1);	
 			ssd1306_UpdateScreen();			
 			osDelay(2000);	
 	
