@@ -78,6 +78,33 @@
         <IsCurrentTarget>1</IsCurrentTarget>
       </OPTFL>
       <CpuCode>18</CpuCode>
+      <Books>
+        <Book>
+          <Number>0</Number>
+          <Title>Getting Started (STM32L496G-Discovery)</Title>
+          <Path>C:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.3.0\MDK/Boards/ST/STM32L496G-DISCO/Documentation/DM00285842.pdf</Path>
+        </Book>
+        <Book>
+          <Number>1</Number>
+          <Title>User Manual (STM32L496G-Discovery)</Title>
+          <Path>C:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.3.0\MDK/Boards/ST/STM32L496G-DISCO/Documentation/DM00353127.pdf</Path>
+        </Book>
+        <Book>
+          <Number>2</Number>
+          <Title>Bill of Materials (STM32L496G-Discovery)</Title>
+          <Path>C:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.3.0\MDK/Boards/ST/STM32L496G-DISCO/Documentation/stm32l496g-disco_bom.zip</Path>
+        </Book>
+        <Book>
+          <Number>3</Number>
+          <Title>Gerber Files (STM32L496G-Discovery)</Title>
+          <Path>C:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.3.0\MDK/Boards/ST/STM32L496G-DISCO/Documentation/stm32l496g-disco_gerber.zip</Path>
+        </Book>
+        <Book>
+          <Number>4</Number>
+          <Title>STM32L496G-Discovery Web Page (STM32L496G-Discovery)</Title>
+          <Path>http://www.st.com/en/evaluation-tools/32l496gdiscovery.html</Path>
+        </Book>
+      </Books>
       <DebugOpt>
         <uSim>0</uSim>
         <uTrg>1</uTrg>
@@ -309,6 +336,12 @@
       </DebugFlag>
       <LintExecutable></LintExecutable>
       <LintConfigFile></LintConfigFile>
+      <DebugDescription>
+        <Enable>1</Enable>
+        <EnableLog>0</EnableLog>
+        <Protocol>2</Protocol>
+        <DbgClock>10000000</DbgClock>
+      </DebugDescription>
     </TargetOption>
   </Target>
 

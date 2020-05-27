@@ -3023,10 +3023,10 @@ void Display_Task(void const * argument)
 								
 								if (menu_edit_mode == 1) //Режим редактирования
 								{											
-											edit_mode_int(&menu_485_points_for_showing);										
+									edit_mode_int(&menu_485_points_for_showing);																				
 								}
 								else //Нормальный режим
-								{
+								{									
 									snprintf(buffer, sizeof buffer, "%d", menu_485_points_for_showing);
 									ssd1306_WriteString(buffer,font_8x14,1); 
 								}										
@@ -4426,7 +4426,7 @@ void Data_Storage_Task(void const * argument)
 		settings[60] = temp[0];
 		settings[61] = temp[1];
 
-		settings[64] = menu_485_points_for_showing;
+		//settings[64] = menu_485_points_for_showing;
 
 		settings[70] = trigger_485_event_attribute_warning;
 		settings[71] = trigger_485_event_attribute_emerg;
@@ -4597,6 +4597,8 @@ void Data_Storage_Task(void const * argument)
 			convert_float_and_swap(coef_offset_420, &temp[0]);			
 			settings[53] = temp[0];
 			settings[54] = temp[1]; 
+			
+			menu_485_points_for_showing = settings[64];
 			
 			convert_float_and_swap(out_4_20_coef_K, &temp[0]);
 			settings[90] = temp[0];			
@@ -6277,16 +6279,9 @@ void save_settings(void)
 			convert_float_and_swap(up_user_range_4_20, &temp[0]);		
 			settings[49] = temp[0];
 			settings[50] = temp[1];	
-			
-			
-			//settings[64] = slave_adr_mb_master;				
-			//convert_float_and_swap(baud_rate_uart_3, &temp[0]);
-			//settings[65] = temp[0];
-			//settings[66] = temp[1];										
-			//settings[68] = slave_reg_mb_master;					
-			//settings[70] = slave_func_mb_master;
-			//settings[71] = quantity_reg_mb_master;
-			
+						
+			settings[64] = menu_485_points_for_showing;				
+						
 			settings[84] = mode_relay;
 			settings[86] = delay_relay;
 			settings[88] = delay_relay_exit;
