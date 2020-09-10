@@ -4765,6 +4765,8 @@ void TriggerLogic_Task(void const * argument)
 							
 							flag_delay_relay_1_4_20 = 1; //Запускаем таймер
 							
+							if (delay_relay == 0) relay_permission_1_4_20 = 1;
+							
 							if (relay_permission_1_4_20 == 1) //Если разрешение получено, то работаем
 							{	
 								state_warning_relay = 1;			
@@ -4791,6 +4793,8 @@ void TriggerLogic_Task(void const * argument)
 						if ( calculated_value_4_20 <= lo_emerg_420 || calculated_value_4_20 >= hi_emerg_420 || break_sensor_420 == 1 ) 
 						{							
 							flag_delay_relay_2_4_20 = 1; //Запускаем таймер
+							
+							if (delay_relay == 0) relay_permission_2_4_20 = 1;
 
 							if (relay_permission_2_4_20 == 1) //Если разрешение получено, то работаем
 							{													
@@ -4885,291 +4889,7 @@ void TriggerLogic_Task(void const * argument)
 				}
 				
 				
-				if (channel_485_ON == 2) //Специальный режим работы для системы ЗСК
-				{	
-						for (uint16_t i = 0; i < REG_485_QTY; i++)
-						{													
-								if (warming_flag == 0)								
-								if(MOVING_AVERAGE == 1) //Расчитываем скользящее среднее и перезаписываем значение с учетом усреднения (ЗСК)		
-								if (i < 15) //Усредняем только вибропараметры
-								{												
-										average_result = 0.0;																	
-									
-										//Сдвигаем массив для записи нового элемента
-										for (int y = 1; y < size_moving_average_ZSK; y++)				
-										{
-												zsk_average_array[i][y-1] = zsk_average_array[i][y];
-										}						
-										
-										//Записываем новое значение 						
-										zsk_average_array[i][size_moving_average_ZSK - 1] = master_array[i].master_value / size_moving_average_ZSK;
-										
-										//Расчитываем среднее
-										for (int j = 0; j < size_moving_average_ZSK; j++)				
-										{
-												average_result += zsk_average_array[i][j] ;							
-										}
-										
-										master_array[i].master_value = average_result;
-								}
-						}			
-					
-						//Заморозка битов состояния, если была сработка 						
-						//if( (state_emerg_relay == 0) && (trigger_485_ZSK_percent < 99) && (trigger_485_ZSK < 0xC00) )												
-						{
-							trigger_485_ZSK = 0;
-							trigger_485_ZSK_percent = 0;
-						}
-					
-						if (state_emerg_relay == 0)
-						for (uint8_t i = 0; i < ZSK_REG_485_QTY; i++)
-						{
-								if (master_array[i].master_on == 1) 
-								{			
-									
-										if ((i >= 0) && (i < 15)) //Регистры с вибропараметрами
-										{
-											
-												//Нижняя предупредительная уставка
-												if (master_array[i].master_value >= master_array[i].low_master_warning_set) 
-												{													
-													if (i == 0 || i == 1 || i == 2) trigger_485_ZSK |= (1<<0);													
-													if (i == 3 || i == 4 || i == 5) trigger_485_ZSK |= (1<<1);											
-													if (i == 6 || i == 7 || i == 8) trigger_485_ZSK |= (1<<2);											
-													if (i == 9 || i == 10 || i == 11) trigger_485_ZSK |= (1<<3);
-													if (i == 12 || i == 13 || i == 14) trigger_485_ZSK |= (1<<4);	
-												}
-												
-												//Предупредительная уставка											
-												if (master_array[i].master_value >= master_array[i].master_warning_set) 
-												{													
-														master_delay_relay_array[i].flag_delay_relay_1 = 1;
-														
-														if (master_delay_relay_array[i].relay_permission_1 == 1)
-														{															
-															if (i == 0 || i == 1 || i == 2) trigger_485_ZSK |= (1<<5);
-															if (i == 3 || i == 4 || i == 5) trigger_485_ZSK |= (1<<6);
-															if (i == 6 || i == 7 || i == 8) trigger_485_ZSK |= (1<<7);
-															if (i == 9 || i == 10 || i == 11) trigger_485_ZSK |= (1<<8);
-															if (i == 12 || i == 13 || i == 14) trigger_485_ZSK |= (1<<9);																															
-															
-															state_warning_relay = 1;
-															flag_for_delay_relay_exit = 1;							
-															xSemaphoreGive( Semaphore_Relay_1 );																
-														}
-												}											
-										
-										
-												//Аварийная уставка
-												if (master_array[i].master_value >= master_array[i].master_emergency_set) 
-												{											
-													master_delay_relay_array[i].flag_delay_relay_2 = 1;
-													
-													if (master_delay_relay_array[i].relay_permission_2 == 1)
-													{
-														
-															if (i == 0) trigger_485_ZSK |= (1<<10);
-															if (i == 1) trigger_485_ZSK |= (1<<11);
-															if (i == 2) trigger_485_ZSK |= (1<<12);
-															
-															if (i == 3) trigger_485_ZSK |= (1<<13);
-															if (i == 4) trigger_485_ZSK |= (1<<14);
-															if (i == 5) trigger_485_ZSK |= (1<<15);
-															
-															if (i == 6) trigger_485_ZSK |= (1<<16);
-															if (i == 7) trigger_485_ZSK |= (1<<17);
-															if (i == 8) trigger_485_ZSK |= (1<<18);
-															
-															if (i == 9) trigger_485_ZSK |= (1<<19);
-															if (i == 10) trigger_485_ZSK |= (1<<20);
-															if (i == 11) trigger_485_ZSK |= (1<<21);												
-															
-															if (i == 12) trigger_485_ZSK |= (1<<22);
-															if (i == 13) trigger_485_ZSK |= (1<<23);
-															if (i == 14) trigger_485_ZSK |= (1<<24);																								
-
-															
-											
-															
-
-															if ( (x_axis & y_axis) ||  (x_axis & z_axis) || (y_axis & z_axis) )												
-															{
-																state_emerg_relay = 1;
-																flag_for_delay_relay_exit = 1;
-																xSemaphoreGive( Semaphore_Relay_2 );							
-															}														
-													}
-												}	
-												else if (master_array[i].master_value < master_array[i].master_emergency_set)						
-												{
-														master_delay_relay_array[i].timer_delay_relay_2 = 0;
-														master_delay_relay_array[i].relay_permission_2 = 0;	
-														master_delay_relay_array[i].flag_delay_relay_2 = 0; 											
-												}
-
-										}
-										else if (i >= 15) //Регистры с углами
-										{
-												//Предупредительная уставка											
-												if (master_array[i].master_value >= master_array[i].master_warning_set || master_array[i].master_value <= master_array[i].low_master_warning_set) 
-												{
-													
-														master_delay_relay_array[i].flag_delay_relay_1 = 1;
-														
-														if (master_delay_relay_array[i].relay_permission_1 == 1)
-														{
-											
-															if (i == 15 || i == 16 || i == 17) 
-															{
-																trigger_485_ZSK |= (1<<25);																	
-															}
-															
-															state_warning_relay = 1;
-															flag_for_delay_relay_exit = 1;							
-															xSemaphoreGive( Semaphore_Relay_1 );							
-														}
-												}	
-												else if (master_array[i].master_value < master_array[i].master_warning_set) 						
-												{
-														master_delay_relay_array[i].timer_delay_relay_1 = 0;
-														master_delay_relay_array[i].relay_permission_1 = 0;	
-														master_delay_relay_array[i].flag_delay_relay_1 = 0;											
-												}
-										
-										
-										
-												//Аварийная уставка
-												if (master_array[i].master_value >= master_array[i].master_emergency_set || master_array[i].master_value <= master_array[i].low_master_emergency_set) 
-												{											
-													master_delay_relay_array[i].flag_delay_relay_2 = 1;
-													
-													if (master_delay_relay_array[i].relay_permission_2 == 1)
-													{
-															
-															if (i == 15) trigger_485_ZSK |= (1<<26);
-															if (i == 16) trigger_485_ZSK |= (1<<27);
-															if (i == 17) trigger_485_ZSK |= (1<<28);																								
-
-															
-															if ( ((trigger_485_ZSK & (1<<26)) != 0) || ((trigger_485_ZSK & (1<<27)) != 0) || ((trigger_485_ZSK & (1<<28)) != 0)  )
-															{
-																state_emerg_relay = 1;
-																flag_for_delay_relay_exit = 1;	
-																xSemaphoreGive( Semaphore_Relay_2 );							
-															}
-													}
-												}	
-												else if (master_array[i].master_value < master_array[i].master_emergency_set)						
-												{
-														master_delay_relay_array[i].timer_delay_relay_2 = 0;
-														master_delay_relay_array[i].relay_permission_2 = 0;	
-														master_delay_relay_array[i].flag_delay_relay_2 = 0; 											
-												}											
-										}										
-								}
-						}							
-						
-						//Проверка на срабатывание по осям	
-						x_axis = (((trigger_485_ZSK & (1<<10)) != 0) ||
-						((trigger_485_ZSK & (1<<13)) != 0) ||
-						((trigger_485_ZSK & (1<<16)) != 0) ||
-						((trigger_485_ZSK & (1<<19)) != 0) ||
-						((trigger_485_ZSK & (1<<22)) != 0));
-						
-						y_axis = (((trigger_485_ZSK & (1<<11)) != 0) ||
-						((trigger_485_ZSK & (1<<14)) != 0) ||
-						((trigger_485_ZSK & (1<<17)) != 0) ||
-						((trigger_485_ZSK & (1<<20)) != 0) ||
-						((trigger_485_ZSK & (1<<23)) != 0));
-						
-						z_axis = (((trigger_485_ZSK & (1<<12)) != 0) ||
-						((trigger_485_ZSK & (1<<15)) != 0) ||
-						((trigger_485_ZSK & (1<<18)) != 0) ||
-						((trigger_485_ZSK & (1<<21)) != 0) ||
-						((trigger_485_ZSK & (1<<24)) != 0));							
-						
-						
-						//Обработка регистра состояния оборудования (расчет процента, биты -> проценты)
-						for (int i = 0; i < ZSK_REG_485_QTY; i++) //Раскидываем биты по массиву
-						{
-							ZSK_trigger_array[i] = trigger_485_ZSK & (1<<i);
-						}
-						
-						for(int i = 0; i < ZSK_REG_485_QTY; i++) 
-						{
-							if (i >= 0 && i < 5) 
-							{								
-								if ((ZSK_trigger_array_previous[i] == 0) && (ZSK_trigger_array[i] != 0)) 
-								{								
-									trigger_485_ZSK_percent += 5;																										
-								}							
-							}
-							
-							if (i >= 5 && i < 10) 
-							{								
-								if ((ZSK_trigger_array_previous[i] == 0) && (ZSK_trigger_array[i] != 0)) 								
-								{
-									if (trigger_485_ZSK_percent < 50) trigger_485_ZSK_percent = 50; //Базис								
-									
-									trigger_485_ZSK_percent += 5;								
-								}								
-							}
-							
-							if (i >= 10 && i < 26) 
-							{
-								if ((ZSK_trigger_array_previous[i] == 0) && (ZSK_trigger_array[i] != 0)) 
-								{
-									if (trigger_485_ZSK_percent < 90) trigger_485_ZSK_percent = 90;								
-								}
-							}							
-							
-							if (i >= 26 && i < 29)
-							{
-								if ((ZSK_trigger_array_previous[i] == 0) && (ZSK_trigger_array[i] != 0)) 
-								{
-									trigger_485_ZSK_percent = 100;
-									
-								}
-							}							
-						}						
-						
-						
-						if ( (x_axis && y_axis) || (x_axis && z_axis) || (y_axis && z_axis) )	
-						{
-							trigger_485_ZSK_percent = 100;							
-						}
-						
-						//Обработка значений при выходе за границу диапазона
-						if (trigger_485_ZSK_percent < 0)  trigger_485_ZSK_percent = 0;
-						else if (trigger_485_ZSK_percent > 100) trigger_485_ZSK_percent = 100;
-						
-						if ((settings[34] == 1) && (warming_flag == 0))
-						{
-							//Если было событие, сохраняем регистр состояния на flash						
-							if ( (trigger_485_ZSK_percent_prev != trigger_485_ZSK_percent) && (trigger_485_ZSK_percent >= 100) && (warming_flag == 0) )						
-							{
-								write_reg_flash(104, trigger_485_ZSK, 1);								
-							}							
-						}
-						
-						trigger_485_ZSK_percent_prev = trigger_485_ZSK_percent;
-							
-						//Фиксируем текущее состояние, для того чтоб не было одновременных нескольких срабатываний при подъеме бита
-						//memcpy(ZSK_trigger_array_previous, ZSK_trigger_array, sizeof(ZSK_trigger_array));
-					
-						
-						
-						
-						
-						//Обрыв датчика
-						if(break_sensor_485 == 1) 
-						{
-							state_emerg_relay = 1;							
-							trigger_485_ZSK_percent = 100;
-							xSemaphoreGive( Semaphore_Relay_2 );							
-						}
-						
-				}					
+				
 				
 				
 				if (mode_relay == 0)
@@ -5252,7 +4972,7 @@ void TriggerLogic_Task(void const * argument)
 		}
 		
 		
-    osDelay(10);
+    osDelay(1);
   }
   /* USER CODE END TriggerLogic_Task */
 }
