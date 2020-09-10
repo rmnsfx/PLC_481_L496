@@ -110,7 +110,8 @@
 #define ADC_BUFFER_SIZE_SMALL 64
 
 //#define QUEUE_LENGHT 32 //2 сек. ( расчет (1/Fcut)*10 ) 
-#define QUEUE_LENGHT_4_20 8 //0.5 сек.
+//#define QUEUE_LENGHT_4_20 8 //0.5 сек.
+#define QUEUE_LENGHT_4_20 1 
 
 #define FILTER_MODE filter_mode_icp
 
@@ -137,7 +138,7 @@
 
 #define TIME_BREAK_SENSOR_485 15 //сек.
 
-#define VERSION 5.47
+#define VERSION 5.48
 
 #define REG_485_QTY 40
 #define REG_485_START_ADDR 144
