@@ -769,13 +769,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			{					
 					flag_for_delay_relay_exit_1 = 0;
 					timer_delay_relay_exit_1 = 0;			
-
 			}
 			else 
 			{
 				timer_delay_relay_exit_1 += 100;										
-			}
-			
+			}			
 		}			
 		
 		//Таймер для задержки на выход из срабатывания реле 2
@@ -789,8 +787,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			else 
 			{
 				timer_delay_relay_exit_2 += 100;										
-			}
-			
+			}			
 		}					
 		
 		

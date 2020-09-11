@@ -496,6 +496,9 @@ uint16_t reg_lost_packet[REG_485_QTY];
 uint8_t event_bit_flag1 = 0;
 uint8_t event_bit_flag2 = 0;
 
+static uint8_t warning_state_relay_1_modbus = 0;
+static uint8_t emerg_state_relay_2_modbus = 0;
+
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
 osThreadId myTask02Handle;
@@ -4460,8 +4463,10 @@ void Data_Storage_Task(void const * argument)
 
 		settings[80] = warning_relay_counter; 
 		settings[81] = emerg_relay_counter; 
-		settings[82] = state_warning_relay;
-		settings[83] = state_emerg_relay;
+//		settings[82] = state_warning_relay;
+//		settings[83] = state_emerg_relay;
+		settings[82] = warning_state_relay_1_modbus;
+		settings[83] = emerg_state_relay_2_modbus;		
 		
 		settings[87] = trigger_event_attribute;
 
@@ -4821,7 +4826,7 @@ void TriggerLogic_Task(void const * argument)
 						//Аварийная
 						if ( calculated_value_4_20 <= lo_emerg_420 || calculated_value_4_20 >= hi_emerg_420 || break_sensor_420 == 1 ) 
 						{							
-							flag_delay_relay_2_4_20 = 1; //Запускаем таймер
+							flag_delay_relay_2_4_20 = 1; 			//Запускаем таймер
 							
 							if (delay_relay == 0) relay_permission_2_4_20 = 1;
 
@@ -4829,7 +4834,7 @@ void TriggerLogic_Task(void const * argument)
 							{													
 								state_emerg_relay = 1;
 								trigger_event_attribute |= (1<<12);				
-								//flag_for_delay_relay_exit = 1;
+								
 								xSemaphoreGive( Semaphore_Relay_2 );							
 							}
 						}
@@ -4841,11 +4846,29 @@ void TriggerLogic_Task(void const * argument)
 							{
 								timer_delay_relay_2_4_20 = 0;
 								relay_permission_2_4_20 = 0;	
-								flag_delay_relay_2_4_20 = 0; 
+								flag_delay_relay_2_4_20 = 0; 								
 								
-								xSemaphoreGive( Semaphore_Relay_2 );	
 							}							
+						}						
+						
+						
+						if( prev_state_relay_2 == 0 && state_emerg_relay == 1 ) //Детектируем нарастающий фронт
+						{
+								state_emerg_relay = 0;
+								xSemaphoreGive( Semaphore_Relay_2 );
+								vTaskDelay(100);
+								state_emerg_relay = 1;
+								xSemaphoreGive( Semaphore_Relay_2 );								
 						}
+						
+						if( prev_state_relay_2 == 1 && state_emerg_relay == 0 ) //Детектируем спадающий фронт
+						{
+								flag_for_delay_relay_exit_2 = 1; //Запускаем таймер на выход из срабатывания
+								timer_delay_relay_exit_2 = 0;
+						}
+						
+						prev_state_relay_2 = state_emerg_relay; //Запоминаем состояние авар. реле					
+						
 				}
 				
 				//Источник сигнала 485 (Modbus)
@@ -4932,7 +4955,7 @@ void TriggerLogic_Task(void const * argument)
 						}
 						
 						//Сброс авар. реле 
-						if (state_emerg_relay== 0 && relay_permission_2_4_20 == 0)
+						if (state_emerg_relay== 0 && relay_permission_2_4_20 == 0 && flag_for_delay_relay_exit_2 == 0 )
 						{							
 							xSemaphoreGive( Semaphore_Relay_2 );							
 						}				
@@ -5030,6 +5053,7 @@ void Relay_1_Task(void const * argument)
 			if (state_warning_relay == 1)
 			{
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);	
+				warning_state_relay_1_modbus = 1;
 			}
 				
 			if (prev_state_relay == 0) warning_relay_counter++;
@@ -5038,15 +5062,8 @@ void Relay_1_Task(void const * argument)
 		
 		if (state_warning_relay == 0 && mode_relay == 0)
 		{
-			if (flag_for_delay_relay_exit_1 == 0) 
-			{ 
-					//osDelay(delay_relay_exit); 
-					//flag_for_delay_relay_exit = 0; 						
-					
-			}			
-			
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET); 
-			
+			warning_state_relay_1_modbus = 0;			
 		}
 		
 		prev_state_relay = state_warning_relay;
@@ -5078,6 +5095,7 @@ void Relay_2_Task(void const * argument)
 			if (state_emerg_relay == 1)
 			{
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
+				emerg_state_relay_2_modbus = 1;
 			}
 
 			if (prev_state_relay == 0) 
@@ -5088,14 +5106,8 @@ void Relay_2_Task(void const * argument)
 		
 		if (state_emerg_relay == 0 && mode_relay == 0)
 		{
-			if (flag_for_delay_relay_exit == 1) 
-			{ 
-					//osDelay(delay_relay_exit); 
-					flag_for_delay_relay_exit = 0; 
-			}
-			
-			
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
+			emerg_state_relay_2_modbus = 0;
 		}   
 		
 		
