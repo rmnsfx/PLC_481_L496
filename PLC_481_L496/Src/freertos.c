@@ -4803,15 +4803,7 @@ void TriggerLogic_Task(void const * argument)
 								
 							}													
 						}
-												
-						if( prev_state_relay_1 == 0 && state_warning_relay == 1 ) //Детектируем нарастающий фронт
-						{
-								state_warning_relay = 0;
-								xSemaphoreGive( Semaphore_Relay_1 );
-								vTaskDelay(100);
-								state_warning_relay = 1;
-								xSemaphoreGive( Semaphore_Relay_1 );								
-						}
+
 						
 						if( prev_state_relay_1 == 1 && state_warning_relay == 0 ) //Детектируем спадающий фронт
 						{
@@ -4851,15 +4843,6 @@ void TriggerLogic_Task(void const * argument)
 							}							
 						}						
 						
-						
-						if( prev_state_relay_2 == 0 && state_emerg_relay == 1 ) //Детектируем нарастающий фронт
-						{
-								state_emerg_relay = 0;
-								xSemaphoreGive( Semaphore_Relay_2 );
-								vTaskDelay(100);
-								state_emerg_relay = 1;
-								xSemaphoreGive( Semaphore_Relay_2 );								
-						}
 						
 						if( prev_state_relay_2 == 1 && state_emerg_relay == 0 ) //Детектируем спадающий фронт
 						{
