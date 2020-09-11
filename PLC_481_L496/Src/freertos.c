@@ -325,6 +325,11 @@ volatile uint8_t flag_for_delay_relay_exit_2 = 0;
 volatile uint16_t timer_delay_relay_exit_1 = 0;
 volatile uint16_t timer_delay_relay_exit_2 = 0;
 
+volatile uint8_t flag_for_delay_relay_exit_1_icp = 0;
+volatile uint16_t timer_delay_relay_exit_1_icp = 0;
+volatile uint8_t flag_for_delay_relay_exit_2_icp = 0;
+volatile uint16_t timer_delay_relay_exit_2_icp = 0;
+
 uint8_t flag_delay_relay_1_4_20 = 0;
 uint8_t relay_permission_1_4_20 = 0;
 uint16_t timer_delay_relay_1_4_20 = 0;
@@ -4725,6 +4730,7 @@ void TriggerLogic_Task(void const * argument)
 						if ( rms_velocity_icp >= hi_warning_icp || break_sensor_icp == 1 )								
 						{
 							flag_delay_relay_1_icp = 1; //Запускаем таймер
+							if (delay_relay == 0) relay_permission_1_icp = 1;  //Выдаем разрешение, если время задержки на срабатывание равно нулю							
 							
 							if (relay_permission_1_icp == 1) //Если разрешение получено, то работаем
 							{
@@ -4744,10 +4750,20 @@ void TriggerLogic_Task(void const * argument)
 							flag_delay_relay_1_icp = 0; 							
 						}
 						
+						if( prev_state_relay_1 == 1 && state_warning_relay == 0 ) //Детектируем спадающий фронт
+						{
+								flag_for_delay_relay_exit_1_icp = 1; //Запускаем таймер на выход из срабатывания
+								timer_delay_relay_exit_1_icp = 0;
+						}						
+						prev_state_relay_1 = state_warning_relay; //Запоминаем состояние предупр. реле 					
+
+						
+						
 						//Авар. реле
 						if ( rms_velocity_icp >= hi_emerg_icp || break_sensor_icp == 1 ) 
 						{								
 							flag_delay_relay_2_icp = 1; //Запускаем таймер
+							if (delay_relay == 0) relay_permission_2_icp = 1;  //Выдаем разрешение, если время задержки на срабатывание равно нулю														
 							
 							if (relay_permission_2_icp == 1) //Если разрешение получено, то работаем
 							{
@@ -4767,6 +4783,15 @@ void TriggerLogic_Task(void const * argument)
 							relay_permission_2_icp = 0;	
 							flag_delay_relay_2_icp = 0; 
 						}
+						
+						if( prev_state_relay_1 == 1 && state_emerg_relay == 0 ) //Детектируем спадающий фронт
+						{
+								flag_for_delay_relay_exit_2_icp = 1; //Запускаем таймер на выход из срабатывания
+								timer_delay_relay_exit_2_icp = 0;
+						}						
+						prev_state_relay_2 = state_emerg_relay; //Запоминаем состояние предупр. реле 		
+
+						
 				}
 				
 				//Источник сигнала 4-20
@@ -4876,7 +4901,7 @@ void TriggerLogic_Task(void const * argument)
 												bit_field[i*2] = 1; //Set warning bit to array of state
 												
 												state_warning_relay = 1;
-												flag_for_delay_relay_exit = 1;							
+												//flag_for_delay_relay_exit = 1;							
 												xSemaphoreGive( Semaphore_Relay_1 );							
 											}
 										}	
@@ -4901,7 +4926,7 @@ void TriggerLogic_Task(void const * argument)
 												bit_field[i*2 + 1] = 1; //Set emergency bit to array of state
 												
 												state_emerg_relay = 1;
-												flag_for_delay_relay_exit = 1;							
+												//flag_for_delay_relay_exit = 1;							
 												xSemaphoreGive( Semaphore_Relay_2 );							
 											}
 										}	

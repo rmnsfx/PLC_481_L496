@@ -208,10 +208,15 @@ extern uint8_t warming_flag;
 
 extern uint8_t delay_relay_exit_1;
 extern uint8_t delay_relay_exit_2;
-extern uint8_t flag_for_delay_relay_exit_1;
-extern uint8_t flag_for_delay_relay_exit_2;
-extern uint16_t timer_delay_relay_exit_1;
-extern uint16_t timer_delay_relay_exit_2;
+extern uint8_t flag_for_delay_relay_exit_1; //4-20
+extern uint8_t flag_for_delay_relay_exit_2; //4-20
+extern uint16_t timer_delay_relay_exit_1;   //4-20
+extern uint16_t timer_delay_relay_exit_2;   //4-20
+
+extern uint8_t flag_for_delay_relay_exit_1_icp;
+extern uint16_t timer_delay_relay_exit_1_icp;
+extern uint8_t flag_for_delay_relay_exit_2_icp;
+extern uint16_t timer_delay_relay_exit_2_icp;
 
 
 
@@ -662,7 +667,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 					break_sensor_485 = 1;
 				}
 				
-
 				
 				//Таймер для задержки на срабатывание реле 1 (канал 4-20)
 				if (flag_delay_relay_1_4_20 == 1)
@@ -760,6 +764,30 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			warm_timer += 100;		
 		}
 		
+
+
+		//Таймер для задержки на выход из срабатывания реле 1 (канал icp)
+		if (flag_for_delay_relay_exit_1_icp == 1)
+		{						
+			if (timer_delay_relay_exit_1_icp == delay_relay)
+			{
+				flag_for_delay_relay_exit_1_icp = 0;
+				timer_delay_relay_exit_1_icp = 0;						
+			}
+			else timer_delay_relay_exit_1_icp += 100;										
+		}			
+		
+		//Таймер для задержки на выход из срабатывания реле 2 (канал icp)
+		if (flag_for_delay_relay_exit_2_icp == 1)
+		{						
+			if (timer_delay_relay_exit_2_icp == delay_relay)
+			{
+				flag_for_delay_relay_exit_2_icp = 0;
+				timer_delay_relay_exit_2_icp = 0;						
+			}
+			else timer_delay_relay_exit_2_icp += 100;										
+		}
+
 		
 		
 		//Таймер для задержки на выход из срабатывания реле 1 
