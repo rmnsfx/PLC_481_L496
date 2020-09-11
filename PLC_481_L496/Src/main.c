@@ -208,6 +208,7 @@ extern uint8_t warming_flag;
 
 extern uint8_t delay_relay_exit_1;
 extern uint8_t delay_relay_exit_2;
+
 extern uint8_t flag_for_delay_relay_exit_1; //4-20
 extern uint8_t flag_for_delay_relay_exit_2; //4-20
 extern uint16_t timer_delay_relay_exit_1;   //4-20
@@ -218,7 +219,10 @@ extern uint16_t timer_delay_relay_exit_1_icp;
 extern uint8_t flag_for_delay_relay_exit_2_icp;
 extern uint16_t timer_delay_relay_exit_2_icp;
 
-
+extern uint8_t flag_for_delay_relay_exit_1_485;
+extern uint16_t timer_delay_relay_exit_1_485;
+extern uint8_t flag_for_delay_relay_exit_2_485;
+extern uint16_t timer_delay_relay_exit_2_485;
 
 /* USER CODE END PV */
 
@@ -790,7 +794,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 		
 		
-		//Таймер для задержки на выход из срабатывания реле 1 
+		//Таймер для задержки на выход из срабатывания реле 1 (канал 4-20)
 		if (flag_for_delay_relay_exit_1 == 1)
 		{						
 			if (timer_delay_relay_exit_1 == delay_relay_exit)
@@ -804,7 +808,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			}			
 		}			
 		
-		//Таймер для задержки на выход из срабатывания реле 2
+		//Таймер для задержки на выход из срабатывания реле 2 (канал 4-20)
 		if (flag_for_delay_relay_exit_2 == 1)
 		{						
 			if (timer_delay_relay_exit_2 == delay_relay_exit)
@@ -819,6 +823,34 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		}					
 		
 		
+		
+		//Таймер для задержки на выход из срабатывания реле 1 (канал 485)
+		if (flag_for_delay_relay_exit_1_485 == 1)
+		{						
+			if (timer_delay_relay_exit_1_485 == delay_relay_exit)
+			{					
+					flag_for_delay_relay_exit_1_485 = 0;
+					timer_delay_relay_exit_1_485 = 0;			
+			}
+			else 
+			{
+				timer_delay_relay_exit_1_485 += 100;										
+			}			
+		}			
+		
+		//Таймер для задержки на выход из срабатывания реле 2 (канал 485)
+		if (flag_for_delay_relay_exit_2_485 == 1)
+		{						
+			if (timer_delay_relay_exit_2_485 == delay_relay_exit)
+			{					
+					flag_for_delay_relay_exit_2_485 = 0;
+					timer_delay_relay_exit_2_485 = 0;						
+			}
+			else 
+			{
+				timer_delay_relay_exit_2_485 += 100;										
+			}			
+		}			
 
 	
 		
