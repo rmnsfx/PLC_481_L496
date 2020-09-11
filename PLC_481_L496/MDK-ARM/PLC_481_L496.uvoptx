@@ -187,42 +187,32 @@
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>power_supply_voltage</ItemText>
+          <ItemText>freeHeapSize,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>freeHeapSize,0x0A</ItemText>
+          <ItemText>flag_for_delay_relay_exit_1</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>xTotalTimeOutSuspended,0x0A</ItemText>
+          <ItemText>flag_for_delay_relay_exit_2</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>reg_lost_packet,0x0A</ItemText>
+          <ItemText>timer_delay_relay_exit_1,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>1</WinNumber>
-          <ItemText>mb_master_request,0x0A</ItemText>
+          <ItemText>timer_delay_relay_exit_2,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>1</WinNumber>
-          <ItemText>mb_master_response,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>7</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>settings</ItemText>
-        </Ww>
-        <Ww>
-          <count>8</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>\\PLC_481_L496\../Src/freertos.c\master_array</ItemText>
+          <ItemText>state_warning_relay</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>

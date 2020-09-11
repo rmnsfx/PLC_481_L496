@@ -318,6 +318,12 @@ uint16_t warning_relay_counter = 0;
 uint16_t emerg_relay_counter = 0;
 uint16_t test_relay = 0;
 
+volatile uint8_t delay_relay_exit_1 = 0;
+volatile uint8_t delay_relay_exit_2 = 0;
+volatile uint8_t flag_for_delay_relay_exit_1 = 0;
+volatile uint8_t flag_for_delay_relay_exit_2 = 0;
+volatile uint16_t timer_delay_relay_exit_1 = 0;
+volatile uint16_t timer_delay_relay_exit_2 = 0;
 
 uint8_t flag_delay_relay_1_4_20 = 0;
 uint8_t relay_permission_1_4_20 = 0;
@@ -4689,13 +4695,15 @@ void TriggerLogic_Task(void const * argument)
 //	osDelay(warming_up);
 //	warming_flag = 0;
 	
+	uint8_t prev_state_relay_1 = 0; 
+	uint8_t prev_state_relay_2 = 0; 
 	
 	
   /* Infinite loop */
   for(;;)
   {
 		
-		//Обнуляем состояние только в режиме работы "без памяти"
+		//Обнуляем/выкл. состояние реле только в режиме работы "без памяти"
 		if (mode_relay == 0)
 		{
 			state_warning_relay = 0;
@@ -4763,30 +4771,51 @@ void TriggerLogic_Task(void const * argument)
 						if ( calculated_value_4_20 >= hi_warning_420 || calculated_value_4_20 <= lo_warning_420 || break_sensor_420 == 1 ) 
 						{							
 							
-							flag_delay_relay_1_4_20 = 1; //Запускаем таймер
+							flag_delay_relay_1_4_20 = 1; 												//Запускаем таймер на срабатывание							
+							if (delay_relay == 0) relay_permission_1_4_20 = 1;  //Выдаем разрешение, если время задержки на срабатывание равно нулю							
 							
-							if (delay_relay == 0) relay_permission_1_4_20 = 1;
-							
-							if (relay_permission_1_4_20 == 1) //Если разрешение получено, то работаем
+							if (relay_permission_1_4_20 == 1) 		//Если разрешение получено, то работаем
 							{	
-								state_warning_relay = 1;			
+								state_warning_relay = 1;						//Реле вкл.		
 								trigger_event_attribute |= (1<<13);
-								flag_for_delay_relay_exit = 1;														
+								
+									
 								xSemaphoreGive( Semaphore_Relay_1 );							
 							}
 							
 						}						
 						else 
 						{
-							if ( mean_4_20 > lo_warning_420 && mean_4_20 < hi_warning_420 ) //Если сигнал ниже предупр. уставки
+							if ( calculated_value_4_20 > lo_warning_420 && calculated_value_4_20 < hi_warning_420 ) //Если сигнал ниже предупр. уставки
 							{							
+								state_warning_relay = 0; 						//Реле выкл.
+																							
 								if (mode_relay == 0) trigger_event_attribute &= ~(1<<13);
-								
-								timer_delay_relay_1_4_20 = 0;
+																
 								relay_permission_1_4_20 = 0;	
 								flag_delay_relay_1_4_20 = 0; 								
+								timer_delay_relay_1_4_20 = 0;																
+								
 							}													
 						}
+												
+						if( prev_state_relay_1 == 0 && state_warning_relay == 1 ) //Детектируем нарастающий фронт
+						{
+								state_warning_relay = 0;
+								xSemaphoreGive( Semaphore_Relay_1 );
+								vTaskDelay(100);
+								state_warning_relay = 1;
+								xSemaphoreGive( Semaphore_Relay_1 );								
+						}
+						
+						if( prev_state_relay_1 == 1 && state_warning_relay == 0 ) //Детектируем спадающий фронт
+						{
+								flag_for_delay_relay_exit_1 = 1; //Запускаем таймер на выход из срабатывания
+								timer_delay_relay_exit_1 = 0;
+						}
+						
+						prev_state_relay_1 = state_warning_relay; //Запоминаем состояние предупр. реле 
+						
 						
 						
 						//Аварийная
@@ -4800,7 +4829,7 @@ void TriggerLogic_Task(void const * argument)
 							{													
 								state_emerg_relay = 1;
 								trigger_event_attribute |= (1<<12);				
-								flag_for_delay_relay_exit = 1;
+								//flag_for_delay_relay_exit = 1;
 								xSemaphoreGive( Semaphore_Relay_2 );							
 							}
 						}
@@ -4813,6 +4842,8 @@ void TriggerLogic_Task(void const * argument)
 								timer_delay_relay_2_4_20 = 0;
 								relay_permission_2_4_20 = 0;	
 								flag_delay_relay_2_4_20 = 0; 
+								
+								xSemaphoreGive( Semaphore_Relay_2 );	
 							}							
 						}
 				}
@@ -4895,7 +4926,7 @@ void TriggerLogic_Task(void const * argument)
 				if (mode_relay == 0)
 				{
 						//Сброс предупр. реле 
-						if (state_warning_relay == 0 && relay_permission_1_4_20 == 0)  
+						if ( state_warning_relay == 0 && relay_permission_1_4_20 == 0 && flag_for_delay_relay_exit_1 == 0 )  
 						{								
 							xSemaphoreGive( Semaphore_Relay_1 );							
 						}
@@ -4972,7 +5003,7 @@ void TriggerLogic_Task(void const * argument)
 		}
 		
 		
-    osDelay(1);
+    osDelay(3);
   }
   /* USER CODE END TriggerLogic_Task */
 }
@@ -4987,7 +5018,7 @@ void TriggerLogic_Task(void const * argument)
 void Relay_1_Task(void const * argument)
 {
   /* USER CODE BEGIN Relay_1_Task */
-	uint8_t prev_state_relay;
+	static uint8_t prev_state_relay;
   /* Infinite loop */
   for(;;)
   {
@@ -5007,13 +5038,15 @@ void Relay_1_Task(void const * argument)
 		
 		if (state_warning_relay == 0 && mode_relay == 0)
 		{
-			if (flag_for_delay_relay_exit == 1) 
+			if (flag_for_delay_relay_exit_1 == 0) 
 			{ 
-					osDelay(delay_relay_exit); 
-					flag_for_delay_relay_exit = 0; 
+					//osDelay(delay_relay_exit); 
+					//flag_for_delay_relay_exit = 0; 						
+					
 			}			
 			
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET); 
+			
 		}
 		
 		prev_state_relay = state_warning_relay;
@@ -5031,7 +5064,7 @@ void Relay_1_Task(void const * argument)
 void Relay_2_Task(void const * argument)
 {
   /* USER CODE BEGIN Relay_2_Task */
-	uint8_t prev_state_relay;
+	static uint8_t prev_state_relay;
   /* Infinite loop */
   for(;;)
   {
@@ -5057,7 +5090,7 @@ void Relay_2_Task(void const * argument)
 		{
 			if (flag_for_delay_relay_exit == 1) 
 			{ 
-					osDelay(delay_relay_exit); 
+					//osDelay(delay_relay_exit); 
 					flag_for_delay_relay_exit = 0; 
 			}
 			
