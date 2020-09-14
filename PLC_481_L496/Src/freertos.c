@@ -509,6 +509,9 @@ uint8_t event_bit_flag2 = 0;
 static uint8_t warning_state_relay_1_modbus = 0;
 static uint8_t emerg_state_relay_2_modbus = 0;
 
+uint8_t average_4_20_onoff = 0;
+uint8_t QUEUE_LENGHT_4_20 = 0;
+
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
 osThreadId myTask02Handle;
@@ -4405,7 +4408,7 @@ void Data_Storage_Task(void const * argument)
   for(;;)
   {
 		
-		//Смещение на -1 (т.е. 1й регистр == settings[0])
+		//Смещение на -1 (т.е. 1й modscan регистр == settings[0])
 		
 		convert_float_and_swap(icp_voltage, &temp[0]);				
 		settings[0] = temp[0];
@@ -4426,7 +4429,7 @@ void Data_Storage_Task(void const * argument)
 		settings[30] = trigger_485_ZSK; 				//Младшие биты
 		settings[31] = trigger_485_ZSK >> 16;		//Старшие биты
 		settings[32] = trigger_485_ZSK_percent;
-		
+				
 		
 		convert_float_and_swap(mean_4_20, &temp[0]);		
 		settings[36] = temp[0];
@@ -4635,7 +4638,11 @@ void Data_Storage_Task(void const * argument)
 			
 			init_menu(0);
 			FilterInit();
-		
+			
+					
+			xQueueReset(queue_4_20);
+			xQueueReset(velocity_queue_4_20);
+			xQueueReset(displacement_queue_4_20);
 	
 		}
 		

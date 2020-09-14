@@ -224,6 +224,12 @@ extern uint16_t timer_delay_relay_exit_1_485;
 extern uint8_t flag_for_delay_relay_exit_2_485;
 extern uint16_t timer_delay_relay_exit_2_485;
 
+extern uint8_t average_4_20_onoff; //4-20
+extern uint8_t QUEUE_LENGHT_4_20;
+extern xQueueHandle queue_4_20;
+extern xQueueHandle velocity_queue_4_20;
+extern xQueueHandle displacement_queue_4_20;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -520,6 +526,14 @@ void read_init_settings(void)
 	
 	size_moving_average_ZSK = settings[33];
 	if ( size_moving_average_ZSK < 1 || size_moving_average_ZSK > 512 ) size_moving_average_ZSK = 1;
+	
+	average_4_20_onoff = settings[35];
+	/* Частота дискр. 25600 / 256 (размер буффера выборки) = 100 усреднений за 1 сек. */
+	if( average_4_20_onoff > 0 ) QUEUE_LENGHT_4_20 = 50; 
+	else 
+	{
+		QUEUE_LENGHT_4_20 = 1;
+	}
 	
 	lo_warning_420 = convert_hex_to_float(&settings[0], 38); 	
 	hi_warning_420 = convert_hex_to_float(&settings[0], 40); 	
