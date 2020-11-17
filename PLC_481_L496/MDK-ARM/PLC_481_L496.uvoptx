@@ -78,6 +78,33 @@
         <IsCurrentTarget>1</IsCurrentTarget>
       </OPTFL>
       <CpuCode>18</CpuCode>
+      <Books>
+        <Book>
+          <Number>0</Number>
+          <Title>Getting Started (STM32L496G-Discovery)</Title>
+          <Path>C:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.2.0\MDK/Boards/ST/STM32L496G-DISCO/Documentation/DM00285842.pdf</Path>
+        </Book>
+        <Book>
+          <Number>1</Number>
+          <Title>User Manual (STM32L496G-Discovery)</Title>
+          <Path>C:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.2.0\MDK/Boards/ST/STM32L496G-DISCO/Documentation/DM00353127.pdf</Path>
+        </Book>
+        <Book>
+          <Number>2</Number>
+          <Title>Bill of Materials (STM32L496G-Discovery)</Title>
+          <Path>C:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.2.0\MDK/Boards/ST/STM32L496G-DISCO/Documentation/stm32l496g-disco_bom.zip</Path>
+        </Book>
+        <Book>
+          <Number>3</Number>
+          <Title>Gerber Files (STM32L496G-Discovery)</Title>
+          <Path>C:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.2.0\MDK/Boards/ST/STM32L496G-DISCO/Documentation/stm32l496g-disco_gerber.zip</Path>
+        </Book>
+        <Book>
+          <Number>4</Number>
+          <Title>STM32L496G-Discovery Web Page (STM32L496G-Discovery)</Title>
+          <Path>http://www.st.com/en/evaluation-tools/32l496gdiscovery.html</Path>
+        </Book>
+      </Books>
       <DebugOpt>
         <uSim>0</uSim>
         <uTrg>1</uTrg>
@@ -127,7 +154,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGTARM</Key>
-          <Name>(1010=-1,-1,-1,-1,0)(1007=-1,-1,-1,-1,0)(1008=-1,-1,-1,-1,0)(1009=-1,-1,-1,-1,0)(1012=2055,168,2520,471,0)</Name>
+          <Name>(1010=-1,-1,-1,-1,0)(1007=-1,-1,-1,-1,0)(1008=-1,-1,-1,-1,0)(1009=-1,-1,-1,-1,0)(1012=1455,168,1920,471,0)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -137,7 +164,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>JL2CM3</Key>
-          <Name>-U281100043 -O78 -S0 -A0 -C0 -JU1 -JI127.0.0.1 -JP0 -RST0 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO7 -FD20000000 -FC1000 -FN1 -FF0STM32L4xx_1024.FLM -FS08000000 -FL0100000 -FP0($$Device:STM32L496RGTx$Flash/STM32L4xx_1024.FLM)</Name>
+          <Name>-U281100043 -O78 -S0 -A0 -C0 -JU1 -JI127.0.0.1 -JP0 -RST0 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO7 -FD20000000 -FC1000 -FN1 -FF0STM32L4xx_1024.FLM -FS08000000 -FL0100000 -FP0($$Device:STM32L496RGTx$CMSIS/Flash/STM32L4xx_1024.FLM)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -160,42 +187,27 @@
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>power_supply_voltage</ItemText>
+          <ItemText>freeHeapSize,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>freeHeapSize,0x0A</ItemText>
+          <ItemText>state_warning_relay</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>xTotalTimeOutSuspended,0x0A</ItemText>
+          <ItemText>state_emerg_relay</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>reg_lost_packet,0x0A</ItemText>
+          <ItemText>flag_for_delay_relay_exit_1_485</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>1</WinNumber>
-          <ItemText>mb_master_request,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>6</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>mb_master_response,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>7</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>settings</ItemText>
-        </Ww>
-        <Ww>
-          <count>8</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>\\PLC_481_L496\../Src/freertos.c\master_array</ItemText>
+          <ItemText>timer_delay_relay_exit_1_485,0x0A</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
@@ -309,6 +321,12 @@
       </DebugFlag>
       <LintExecutable></LintExecutable>
       <LintConfigFile></LintConfigFile>
+      <DebugDescription>
+        <Enable>1</Enable>
+        <EnableLog>0</EnableLog>
+        <Protocol>2</Protocol>
+        <DbgClock>10000000</DbgClock>
+      </DebugDescription>
     </TargetOption>
   </Target>
 

@@ -318,6 +318,22 @@ uint16_t warning_relay_counter = 0;
 uint16_t emerg_relay_counter = 0;
 uint16_t test_relay = 0;
 
+volatile uint8_t delay_relay_exit_1 = 0;
+volatile uint8_t delay_relay_exit_2 = 0;
+volatile uint8_t flag_for_delay_relay_exit_1 = 0;
+volatile uint8_t flag_for_delay_relay_exit_2 = 0;
+volatile uint16_t timer_delay_relay_exit_1 = 0;
+volatile uint16_t timer_delay_relay_exit_2 = 0;
+
+volatile uint8_t flag_for_delay_relay_exit_1_icp = 0;
+volatile uint16_t timer_delay_relay_exit_1_icp = 0;
+volatile uint8_t flag_for_delay_relay_exit_2_icp = 0;
+volatile uint16_t timer_delay_relay_exit_2_icp = 0;
+
+uint8_t flag_for_delay_relay_exit_1_485 = 0;
+uint16_t timer_delay_relay_exit_1_485 = 0;
+uint8_t flag_for_delay_relay_exit_2_485 = 0;
+uint16_t timer_delay_relay_exit_2_485 = 0;
 
 uint8_t flag_delay_relay_1_4_20 = 0;
 uint8_t relay_permission_1_4_20 = 0;
@@ -489,6 +505,12 @@ uint16_t reg_lost_packet[REG_485_QTY];
 
 uint8_t event_bit_flag1 = 0;
 uint8_t event_bit_flag2 = 0;
+
+static uint8_t warning_state_relay_1_modbus = 0;
+static uint8_t emerg_state_relay_2_modbus = 0;
+
+uint8_t average_4_20_onoff = 0;
+uint8_t QUEUE_LENGHT_4_20 = 0;
 
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
@@ -3023,10 +3045,10 @@ void Display_Task(void const * argument)
 								
 								if (menu_edit_mode == 1) //Режим редактирования
 								{											
-											edit_mode_int(&menu_485_points_for_showing);										
+									edit_mode_int(&menu_485_points_for_showing);																				
 								}
 								else //Нормальный режим
-								{
+								{									
 									snprintf(buffer, sizeof buffer, "%d", menu_485_points_for_showing);
 									ssd1306_WriteString(buffer,font_8x14,1); 
 								}										
@@ -4386,7 +4408,7 @@ void Data_Storage_Task(void const * argument)
   for(;;)
   {
 		
-		//Смещение на -1 (т.е. 1й регистр == settings[0])
+		//Смещение на -1 (т.е. 1й modscan регистр == settings[0])
 		
 		convert_float_and_swap(icp_voltage, &temp[0]);				
 		settings[0] = temp[0];
@@ -4407,7 +4429,7 @@ void Data_Storage_Task(void const * argument)
 		settings[30] = trigger_485_ZSK; 				//Младшие биты
 		settings[31] = trigger_485_ZSK >> 16;		//Старшие биты
 		settings[32] = trigger_485_ZSK_percent;
-		
+				
 		
 		convert_float_and_swap(mean_4_20, &temp[0]);		
 		settings[36] = temp[0];
@@ -4426,7 +4448,7 @@ void Data_Storage_Task(void const * argument)
 		settings[60] = temp[0];
 		settings[61] = temp[1];
 
-		settings[64] = menu_485_points_for_showing;
+		//settings[64] = menu_485_points_for_showing;
 
 		settings[70] = trigger_485_event_attribute_warning;
 		settings[71] = trigger_485_event_attribute_emerg;
@@ -4454,8 +4476,10 @@ void Data_Storage_Task(void const * argument)
 
 		settings[80] = warning_relay_counter; 
 		settings[81] = emerg_relay_counter; 
-		settings[82] = state_warning_relay;
-		settings[83] = state_emerg_relay;
+//		settings[82] = state_warning_relay;
+//		settings[83] = state_emerg_relay;
+		settings[82] = warning_state_relay_1_modbus;
+		settings[83] = emerg_state_relay_2_modbus;		
 		
 		settings[87] = trigger_event_attribute;
 
@@ -4598,6 +4622,8 @@ void Data_Storage_Task(void const * argument)
 			settings[53] = temp[0];
 			settings[54] = temp[1]; 
 			
+			menu_485_points_for_showing = settings[64];
+			
 			convert_float_and_swap(out_4_20_coef_K, &temp[0]);
 			settings[90] = temp[0];			
 			settings[91] = temp[1];				
@@ -4612,7 +4638,11 @@ void Data_Storage_Task(void const * argument)
 			
 			init_menu(0);
 			FilterInit();
-		
+			
+					
+			xQueueReset(queue_4_20);
+			xQueueReset(velocity_queue_4_20);
+			xQueueReset(displacement_queue_4_20);
 	
 		}
 		
@@ -4687,13 +4717,21 @@ void TriggerLogic_Task(void const * argument)
 //	osDelay(warming_up);
 //	warming_flag = 0;
 	
+	uint8_t prev_state_relay_1_icp = 0; 
+	uint8_t prev_state_relay_2_icp = 0; 
+	
+	uint8_t prev_state_relay_1_4_20 = 0; 
+	uint8_t prev_state_relay_2_4_20 = 0; 
+	
+	uint8_t prev_state_relay_1_485 = 0; 
+	uint8_t prev_state_relay_2_485 = 0; 
 	
 	
   /* Infinite loop */
   for(;;)
   {
 		
-		//Обнуляем состояние только в режиме работы "без памяти"
+		//Обнуляем/выкл. состояние реле только в режиме работы "без памяти"
 		if (mode_relay == 0)
 		{
 			state_warning_relay = 0;
@@ -4710,6 +4748,7 @@ void TriggerLogic_Task(void const * argument)
 						if ( rms_velocity_icp >= hi_warning_icp || break_sensor_icp == 1 )								
 						{
 							flag_delay_relay_1_icp = 1; //Запускаем таймер
+							if (delay_relay == 0) relay_permission_1_icp = 1;  //Выдаем разрешение, если время задержки на срабатывание равно нулю							
 							
 							if (relay_permission_1_icp == 1) //Если разрешение получено, то работаем
 							{
@@ -4729,10 +4768,20 @@ void TriggerLogic_Task(void const * argument)
 							flag_delay_relay_1_icp = 0; 							
 						}
 						
+						if( prev_state_relay_1_icp == 1 && state_warning_relay == 0 ) //Детектируем спадающий фронт
+						{
+								flag_for_delay_relay_exit_1_icp = 1; //Запускаем таймер на выход из срабатывания
+								timer_delay_relay_exit_1_icp = 0;
+						}						
+						prev_state_relay_1_icp = state_warning_relay; //Запоминаем состояние предупр. реле 					
+
+						
+						
 						//Авар. реле
 						if ( rms_velocity_icp >= hi_emerg_icp || break_sensor_icp == 1 ) 
 						{								
 							flag_delay_relay_2_icp = 1; //Запускаем таймер
+							if (delay_relay == 0) relay_permission_2_icp = 1;  //Выдаем разрешение, если время задержки на срабатывание равно нулю														
 							
 							if (relay_permission_2_icp == 1) //Если разрешение получено, то работаем
 							{
@@ -4752,6 +4801,15 @@ void TriggerLogic_Task(void const * argument)
 							relay_permission_2_icp = 0;	
 							flag_delay_relay_2_icp = 0; 
 						}
+						
+						if( prev_state_relay_2_icp == 1 && state_emerg_relay == 0 ) //Детектируем спадающий фронт
+						{
+								flag_for_delay_relay_exit_2_icp = 1; //Запускаем таймер на выход из срабатывания
+								timer_delay_relay_exit_2_icp = 0;
+						}						
+						prev_state_relay_2_icp = state_emerg_relay; //Запоминаем состояние предупр. реле 		
+
+						
 				}
 				
 				//Источник сигнала 4-20
@@ -4761,40 +4819,57 @@ void TriggerLogic_Task(void const * argument)
 						if ( calculated_value_4_20 >= hi_warning_420 || calculated_value_4_20 <= lo_warning_420 || break_sensor_420 == 1 ) 
 						{							
 							
-							flag_delay_relay_1_4_20 = 1; //Запускаем таймер
+							flag_delay_relay_1_4_20 = 1; 												//Запускаем таймер на срабатывание							
+							if (delay_relay == 0) relay_permission_1_4_20 = 1;  //Выдаем разрешение, если время задержки на срабатывание равно нулю							
 							
-							if (relay_permission_1_4_20 == 1) //Если разрешение получено, то работаем
+							if (relay_permission_1_4_20 == 1) 		//Если разрешение получено, то работаем
 							{	
-								state_warning_relay = 1;			
+								state_warning_relay = 1;						//Реле вкл.		
 								trigger_event_attribute |= (1<<13);
-								flag_for_delay_relay_exit = 1;														
+								
+									
 								xSemaphoreGive( Semaphore_Relay_1 );							
 							}
 							
 						}						
 						else 
 						{
-							if ( mean_4_20 > lo_warning_420 && mean_4_20 < hi_warning_420 ) //Если сигнал ниже предупр. уставки
+							if ( calculated_value_4_20 > lo_warning_420 && calculated_value_4_20 < hi_warning_420 ) //Если сигнал ниже предупр. уставки
 							{							
+								state_warning_relay = 0; 						//Реле выкл.
+																							
 								if (mode_relay == 0) trigger_event_attribute &= ~(1<<13);
-								
-								timer_delay_relay_1_4_20 = 0;
+																
 								relay_permission_1_4_20 = 0;	
 								flag_delay_relay_1_4_20 = 0; 								
+								timer_delay_relay_1_4_20 = 0;																
+								
 							}													
 						}
+
+						
+						if( prev_state_relay_1_4_20 == 1 && state_warning_relay == 0 ) //Детектируем спадающий фронт
+						{
+								flag_for_delay_relay_exit_1 = 1; //Запускаем таймер на выход из срабатывания
+								timer_delay_relay_exit_1 = 0;
+						}
+						
+						prev_state_relay_1_4_20 = state_warning_relay; //Запоминаем состояние предупр. реле 
+						
 						
 						
 						//Аварийная
 						if ( calculated_value_4_20 <= lo_emerg_420 || calculated_value_4_20 >= hi_emerg_420 || break_sensor_420 == 1 ) 
 						{							
-							flag_delay_relay_2_4_20 = 1; //Запускаем таймер
+							flag_delay_relay_2_4_20 = 1; 			//Запускаем таймер
+							
+							if (delay_relay == 0) relay_permission_2_4_20 = 1;
 
 							if (relay_permission_2_4_20 == 1) //Если разрешение получено, то работаем
 							{													
 								state_emerg_relay = 1;
 								trigger_event_attribute |= (1<<12);				
-								flag_for_delay_relay_exit = 1;
+								
 								xSemaphoreGive( Semaphore_Relay_2 );							
 							}
 						}
@@ -4806,9 +4881,20 @@ void TriggerLogic_Task(void const * argument)
 							{
 								timer_delay_relay_2_4_20 = 0;
 								relay_permission_2_4_20 = 0;	
-								flag_delay_relay_2_4_20 = 0; 
+								flag_delay_relay_2_4_20 = 0; 								
+								
 							}							
+						}						
+						
+						
+						if( prev_state_relay_2_4_20 == 1 && state_emerg_relay == 0 ) //Детектируем спадающий фронт
+						{
+								flag_for_delay_relay_exit_2 = 1; //Запускаем таймер на выход из срабатывания
+								timer_delay_relay_exit_2 = 0;
 						}
+						
+						prev_state_relay_2_4_20 = state_emerg_relay; //Запоминаем состояние авар. реле					
+						
 				}
 				
 				//Источник сигнала 485 (Modbus)
@@ -4827,13 +4913,15 @@ void TriggerLogic_Task(void const * argument)
 											
 											master_delay_relay_array[i].flag_delay_relay_1 = 1;
 											
+											if (delay_relay == 0) master_delay_relay_array[i].relay_permission_1 = 1;  //Выдаем разрешение, если время задержки на срабатывание равно нулю							
+											
 											if (master_delay_relay_array[i].relay_permission_1 == 1)
 											{												
 												event_bit_flag1 = 1;												
 												bit_field[i*2] = 1; //Set warning bit to array of state
 												
 												state_warning_relay = 1;
-												flag_for_delay_relay_exit = 1;							
+															
 												xSemaphoreGive( Semaphore_Relay_1 );							
 											}
 										}	
@@ -4847,10 +4935,21 @@ void TriggerLogic_Task(void const * argument)
 											master_delay_relay_array[i].flag_delay_relay_1 = 0;											
 										}
 										
+										//Задержка на выход из срабатывание, запуск таймера по спадающему фронту	
+										if( prev_state_relay_1_485 == 1 && state_warning_relay == 0 ) //Детектируем спадающий фронт
+										{
+												flag_for_delay_relay_exit_1_485 = 1; //Запускаем таймер на выход из срабатывания
+												timer_delay_relay_exit_1_485 = 0;
+										}										
+										prev_state_relay_1_485 = state_warning_relay; //Запоминаем состояние предупр. реле 										
+										
+										
 										//Аварийная уставка
 										if (master_array[i].master_value >= master_array[i].master_emergency_set || master_array[i].master_value <= master_array[i].low_master_emergency_set || break_sensor_485 == 1) 
 										{											
 											master_delay_relay_array[i].flag_delay_relay_2 = 1;
+											
+											if (delay_relay == 0) master_delay_relay_array[i].relay_permission_2 = 1;											
 											
 											if (master_delay_relay_array[i].relay_permission_2 == 1)
 											{												
@@ -4858,7 +4957,7 @@ void TriggerLogic_Task(void const * argument)
 												bit_field[i*2 + 1] = 1; //Set emergency bit to array of state
 												
 												state_emerg_relay = 1;
-												flag_for_delay_relay_exit = 1;							
+																	
 												xSemaphoreGive( Semaphore_Relay_2 );							
 											}
 										}	
@@ -4869,13 +4968,21 @@ void TriggerLogic_Task(void const * argument)
 											master_delay_relay_array[i].timer_delay_relay_2 = 0;
 											master_delay_relay_array[i].relay_permission_2 = 0;	
 											master_delay_relay_array[i].flag_delay_relay_2 = 0; 											
-										}					
+										}				
+
+										if( prev_state_relay_2_485 == 1 && state_emerg_relay == 0 ) //Детектируем спадающий фронт
+										{
+												flag_for_delay_relay_exit_2_485 = 1; //Запускаем таймер на выход из срабатывания
+												timer_delay_relay_exit_2_485 = 0;
+										}										
+										prev_state_relay_2_485 = state_emerg_relay; //Запоминаем состояние авар. реле			
+										
 
 										if (event_bit_flag1 == 1) trigger_event_attribute |= (1<<11);											
 										else if (mode_relay == 0) trigger_event_attribute &= ~(1<<11);		
 										
 										if (event_bit_flag2 == 1) trigger_event_attribute |= (1<<10);											
-										else if (mode_relay == 0) trigger_event_attribute &= ~(1<<10);										
+										else if (mode_relay == 0) trigger_event_attribute &= ~(1<<10);									
 
 								}
 						}		
@@ -4883,303 +4990,19 @@ void TriggerLogic_Task(void const * argument)
 				}
 				
 				
-				if (channel_485_ON == 2) //Специальный режим работы для системы ЗСК
-				{	
-						for (uint16_t i = 0; i < REG_485_QTY; i++)
-						{													
-								if (warming_flag == 0)								
-								if(MOVING_AVERAGE == 1) //Расчитываем скользящее среднее и перезаписываем значение с учетом усреднения (ЗСК)		
-								if (i < 15) //Усредняем только вибропараметры
-								{												
-										average_result = 0.0;																	
-									
-										//Сдвигаем массив для записи нового элемента
-										for (int y = 1; y < size_moving_average_ZSK; y++)				
-										{
-												zsk_average_array[i][y-1] = zsk_average_array[i][y];
-										}						
-										
-										//Записываем новое значение 						
-										zsk_average_array[i][size_moving_average_ZSK - 1] = master_array[i].master_value / size_moving_average_ZSK;
-										
-										//Расчитываем среднее
-										for (int j = 0; j < size_moving_average_ZSK; j++)				
-										{
-												average_result += zsk_average_array[i][j] ;							
-										}
-										
-										master_array[i].master_value = average_result;
-								}
-						}			
-					
-						//Заморозка битов состояния, если была сработка 						
-						//if( (state_emerg_relay == 0) && (trigger_485_ZSK_percent < 99) && (trigger_485_ZSK < 0xC00) )												
-						{
-							trigger_485_ZSK = 0;
-							trigger_485_ZSK_percent = 0;
-						}
-					
-						if (state_emerg_relay == 0)
-						for (uint8_t i = 0; i < ZSK_REG_485_QTY; i++)
-						{
-								if (master_array[i].master_on == 1) 
-								{			
-									
-										if ((i >= 0) && (i < 15)) //Регистры с вибропараметрами
-										{
-											
-												//Нижняя предупредительная уставка
-												if (master_array[i].master_value >= master_array[i].low_master_warning_set) 
-												{													
-													if (i == 0 || i == 1 || i == 2) trigger_485_ZSK |= (1<<0);													
-													if (i == 3 || i == 4 || i == 5) trigger_485_ZSK |= (1<<1);											
-													if (i == 6 || i == 7 || i == 8) trigger_485_ZSK |= (1<<2);											
-													if (i == 9 || i == 10 || i == 11) trigger_485_ZSK |= (1<<3);
-													if (i == 12 || i == 13 || i == 14) trigger_485_ZSK |= (1<<4);	
-												}
-												
-												//Предупредительная уставка											
-												if (master_array[i].master_value >= master_array[i].master_warning_set) 
-												{													
-														master_delay_relay_array[i].flag_delay_relay_1 = 1;
-														
-														if (master_delay_relay_array[i].relay_permission_1 == 1)
-														{															
-															if (i == 0 || i == 1 || i == 2) trigger_485_ZSK |= (1<<5);
-															if (i == 3 || i == 4 || i == 5) trigger_485_ZSK |= (1<<6);
-															if (i == 6 || i == 7 || i == 8) trigger_485_ZSK |= (1<<7);
-															if (i == 9 || i == 10 || i == 11) trigger_485_ZSK |= (1<<8);
-															if (i == 12 || i == 13 || i == 14) trigger_485_ZSK |= (1<<9);																															
-															
-															state_warning_relay = 1;
-															flag_for_delay_relay_exit = 1;							
-															xSemaphoreGive( Semaphore_Relay_1 );																
-														}
-												}											
-										
-										
-												//Аварийная уставка
-												if (master_array[i].master_value >= master_array[i].master_emergency_set) 
-												{											
-													master_delay_relay_array[i].flag_delay_relay_2 = 1;
-													
-													if (master_delay_relay_array[i].relay_permission_2 == 1)
-													{
-														
-															if (i == 0) trigger_485_ZSK |= (1<<10);
-															if (i == 1) trigger_485_ZSK |= (1<<11);
-															if (i == 2) trigger_485_ZSK |= (1<<12);
-															
-															if (i == 3) trigger_485_ZSK |= (1<<13);
-															if (i == 4) trigger_485_ZSK |= (1<<14);
-															if (i == 5) trigger_485_ZSK |= (1<<15);
-															
-															if (i == 6) trigger_485_ZSK |= (1<<16);
-															if (i == 7) trigger_485_ZSK |= (1<<17);
-															if (i == 8) trigger_485_ZSK |= (1<<18);
-															
-															if (i == 9) trigger_485_ZSK |= (1<<19);
-															if (i == 10) trigger_485_ZSK |= (1<<20);
-															if (i == 11) trigger_485_ZSK |= (1<<21);												
-															
-															if (i == 12) trigger_485_ZSK |= (1<<22);
-															if (i == 13) trigger_485_ZSK |= (1<<23);
-															if (i == 14) trigger_485_ZSK |= (1<<24);																								
-
-															
-											
-															
-
-															if ( (x_axis & y_axis) ||  (x_axis & z_axis) || (y_axis & z_axis) )												
-															{
-																state_emerg_relay = 1;
-																flag_for_delay_relay_exit = 1;
-																xSemaphoreGive( Semaphore_Relay_2 );							
-															}														
-													}
-												}	
-												else if (master_array[i].master_value < master_array[i].master_emergency_set)						
-												{
-														master_delay_relay_array[i].timer_delay_relay_2 = 0;
-														master_delay_relay_array[i].relay_permission_2 = 0;	
-														master_delay_relay_array[i].flag_delay_relay_2 = 0; 											
-												}
-
-										}
-										else if (i >= 15) //Регистры с углами
-										{
-												//Предупредительная уставка											
-												if (master_array[i].master_value >= master_array[i].master_warning_set || master_array[i].master_value <= master_array[i].low_master_warning_set) 
-												{
-													
-														master_delay_relay_array[i].flag_delay_relay_1 = 1;
-														
-														if (master_delay_relay_array[i].relay_permission_1 == 1)
-														{
-											
-															if (i == 15 || i == 16 || i == 17) 
-															{
-																trigger_485_ZSK |= (1<<25);																	
-															}
-															
-															state_warning_relay = 1;
-															flag_for_delay_relay_exit = 1;							
-															xSemaphoreGive( Semaphore_Relay_1 );							
-														}
-												}	
-												else if (master_array[i].master_value < master_array[i].master_warning_set) 						
-												{
-														master_delay_relay_array[i].timer_delay_relay_1 = 0;
-														master_delay_relay_array[i].relay_permission_1 = 0;	
-														master_delay_relay_array[i].flag_delay_relay_1 = 0;											
-												}
-										
-										
-										
-												//Аварийная уставка
-												if (master_array[i].master_value >= master_array[i].master_emergency_set || master_array[i].master_value <= master_array[i].low_master_emergency_set) 
-												{											
-													master_delay_relay_array[i].flag_delay_relay_2 = 1;
-													
-													if (master_delay_relay_array[i].relay_permission_2 == 1)
-													{
-															
-															if (i == 15) trigger_485_ZSK |= (1<<26);
-															if (i == 16) trigger_485_ZSK |= (1<<27);
-															if (i == 17) trigger_485_ZSK |= (1<<28);																								
-
-															
-															if ( ((trigger_485_ZSK & (1<<26)) != 0) || ((trigger_485_ZSK & (1<<27)) != 0) || ((trigger_485_ZSK & (1<<28)) != 0)  )
-															{
-																state_emerg_relay = 1;
-																flag_for_delay_relay_exit = 1;	
-																xSemaphoreGive( Semaphore_Relay_2 );							
-															}
-													}
-												}	
-												else if (master_array[i].master_value < master_array[i].master_emergency_set)						
-												{
-														master_delay_relay_array[i].timer_delay_relay_2 = 0;
-														master_delay_relay_array[i].relay_permission_2 = 0;	
-														master_delay_relay_array[i].flag_delay_relay_2 = 0; 											
-												}											
-										}										
-								}
-						}							
-						
-						//Проверка на срабатывание по осям	
-						x_axis = (((trigger_485_ZSK & (1<<10)) != 0) ||
-						((trigger_485_ZSK & (1<<13)) != 0) ||
-						((trigger_485_ZSK & (1<<16)) != 0) ||
-						((trigger_485_ZSK & (1<<19)) != 0) ||
-						((trigger_485_ZSK & (1<<22)) != 0));
-						
-						y_axis = (((trigger_485_ZSK & (1<<11)) != 0) ||
-						((trigger_485_ZSK & (1<<14)) != 0) ||
-						((trigger_485_ZSK & (1<<17)) != 0) ||
-						((trigger_485_ZSK & (1<<20)) != 0) ||
-						((trigger_485_ZSK & (1<<23)) != 0));
-						
-						z_axis = (((trigger_485_ZSK & (1<<12)) != 0) ||
-						((trigger_485_ZSK & (1<<15)) != 0) ||
-						((trigger_485_ZSK & (1<<18)) != 0) ||
-						((trigger_485_ZSK & (1<<21)) != 0) ||
-						((trigger_485_ZSK & (1<<24)) != 0));							
-						
-						
-						//Обработка регистра состояния оборудования (расчет процента, биты -> проценты)
-						for (int i = 0; i < ZSK_REG_485_QTY; i++) //Раскидываем биты по массиву
-						{
-							ZSK_trigger_array[i] = trigger_485_ZSK & (1<<i);
-						}
-						
-						for(int i = 0; i < ZSK_REG_485_QTY; i++) 
-						{
-							if (i >= 0 && i < 5) 
-							{								
-								if ((ZSK_trigger_array_previous[i] == 0) && (ZSK_trigger_array[i] != 0)) 
-								{								
-									trigger_485_ZSK_percent += 5;																										
-								}							
-							}
-							
-							if (i >= 5 && i < 10) 
-							{								
-								if ((ZSK_trigger_array_previous[i] == 0) && (ZSK_trigger_array[i] != 0)) 								
-								{
-									if (trigger_485_ZSK_percent < 50) trigger_485_ZSK_percent = 50; //Базис								
-									
-									trigger_485_ZSK_percent += 5;								
-								}								
-							}
-							
-							if (i >= 10 && i < 26) 
-							{
-								if ((ZSK_trigger_array_previous[i] == 0) && (ZSK_trigger_array[i] != 0)) 
-								{
-									if (trigger_485_ZSK_percent < 90) trigger_485_ZSK_percent = 90;								
-								}
-							}							
-							
-							if (i >= 26 && i < 29)
-							{
-								if ((ZSK_trigger_array_previous[i] == 0) && (ZSK_trigger_array[i] != 0)) 
-								{
-									trigger_485_ZSK_percent = 100;
-									
-								}
-							}							
-						}						
-						
-						
-						if ( (x_axis && y_axis) || (x_axis && z_axis) || (y_axis && z_axis) )	
-						{
-							trigger_485_ZSK_percent = 100;							
-						}
-						
-						//Обработка значений при выходе за границу диапазона
-						if (trigger_485_ZSK_percent < 0)  trigger_485_ZSK_percent = 0;
-						else if (trigger_485_ZSK_percent > 100) trigger_485_ZSK_percent = 100;
-						
-						if ((settings[34] == 1) && (warming_flag == 0))
-						{
-							//Если было событие, сохраняем регистр состояния на flash						
-							if ( (trigger_485_ZSK_percent_prev != trigger_485_ZSK_percent) && (trigger_485_ZSK_percent >= 100) && (warming_flag == 0) )						
-							{
-								write_reg_flash(104, trigger_485_ZSK, 1);								
-							}							
-						}
-						
-						trigger_485_ZSK_percent_prev = trigger_485_ZSK_percent;
-							
-						//Фиксируем текущее состояние, для того чтоб не было одновременных нескольких срабатываний при подъеме бита
-						//memcpy(ZSK_trigger_array_previous, ZSK_trigger_array, sizeof(ZSK_trigger_array));
-					
-						
-						
-						
-						
-						//Обрыв датчика
-						if(break_sensor_485 == 1) 
-						{
-							state_emerg_relay = 1;							
-							trigger_485_ZSK_percent = 100;
-							xSemaphoreGive( Semaphore_Relay_2 );							
-						}
-						
-				}					
+				
 				
 				
 				if (mode_relay == 0)
 				{
 						//Сброс предупр. реле 
-						if (state_warning_relay == 0 && relay_permission_1_4_20 == 0)  
+						if ( state_warning_relay == 0 && flag_for_delay_relay_exit_1_icp == 0 && flag_for_delay_relay_exit_1 == 0 && flag_for_delay_relay_exit_1_485 == 0 )  
 						{								
 							xSemaphoreGive( Semaphore_Relay_1 );							
 						}
 						
 						//Сброс авар. реле 
-						if (state_emerg_relay== 0 && relay_permission_2_4_20 == 0)
+						if ( state_emerg_relay== 0 && flag_for_delay_relay_exit_2_icp == 0 && flag_for_delay_relay_exit_2 == 0 && flag_for_delay_relay_exit_2_485 == 0 )
 						{							
 							xSemaphoreGive( Semaphore_Relay_2 );							
 						}				
@@ -5250,7 +5073,7 @@ void TriggerLogic_Task(void const * argument)
 		}
 		
 		
-    osDelay(10);
+    osDelay(3);
   }
   /* USER CODE END TriggerLogic_Task */
 }
@@ -5265,7 +5088,7 @@ void TriggerLogic_Task(void const * argument)
 void Relay_1_Task(void const * argument)
 {
   /* USER CODE BEGIN Relay_1_Task */
-	uint8_t prev_state_relay;
+	static uint8_t prev_state_relay;
   /* Infinite loop */
   for(;;)
   {
@@ -5277,6 +5100,7 @@ void Relay_1_Task(void const * argument)
 			if (state_warning_relay == 1)
 			{
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);	
+				warning_state_relay_1_modbus = 1;
 			}
 				
 			if (prev_state_relay == 0) warning_relay_counter++;
@@ -5285,13 +5109,8 @@ void Relay_1_Task(void const * argument)
 		
 		if (state_warning_relay == 0 && mode_relay == 0)
 		{
-			if (flag_for_delay_relay_exit == 1) 
-			{ 
-					osDelay(delay_relay_exit); 
-					flag_for_delay_relay_exit = 0; 
-			}			
-			
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET); 
+			warning_state_relay_1_modbus = 0;			
 		}
 		
 		prev_state_relay = state_warning_relay;
@@ -5309,7 +5128,7 @@ void Relay_1_Task(void const * argument)
 void Relay_2_Task(void const * argument)
 {
   /* USER CODE BEGIN Relay_2_Task */
-	uint8_t prev_state_relay;
+	static uint8_t prev_state_relay;
   /* Infinite loop */
   for(;;)
   {
@@ -5323,6 +5142,7 @@ void Relay_2_Task(void const * argument)
 			if (state_emerg_relay == 1)
 			{
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
+				emerg_state_relay_2_modbus = 1;
 			}
 
 			if (prev_state_relay == 0) 
@@ -5333,14 +5153,8 @@ void Relay_2_Task(void const * argument)
 		
 		if (state_emerg_relay == 0 && mode_relay == 0)
 		{
-			if (flag_for_delay_relay_exit == 1) 
-			{ 
-					osDelay(delay_relay_exit); 
-					flag_for_delay_relay_exit = 0; 
-			}
-			
-			
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
+			emerg_state_relay_2_modbus = 0;
 		}   
 		
 		
@@ -6277,16 +6091,9 @@ void save_settings(void)
 			convert_float_and_swap(up_user_range_4_20, &temp[0]);		
 			settings[49] = temp[0];
 			settings[50] = temp[1];	
-			
-			
-			//settings[64] = slave_adr_mb_master;				
-			//convert_float_and_swap(baud_rate_uart_3, &temp[0]);
-			//settings[65] = temp[0];
-			//settings[66] = temp[1];										
-			//settings[68] = slave_reg_mb_master;					
-			//settings[70] = slave_func_mb_master;
-			//settings[71] = quantity_reg_mb_master;
-			
+						
+			settings[64] = menu_485_points_for_showing;				
+						
 			settings[84] = mode_relay;
 			settings[86] = delay_relay;
 			settings[88] = delay_relay_exit;

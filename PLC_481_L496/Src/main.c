@@ -202,9 +202,34 @@ extern uint8_t worker_status;
 extern uint16_t size_moving_average_ZSK;
 extern uint64_t trigger_485_ZSK; 
 
-volatile uint32_t warm_timer = 0;
+uint32_t warm_timer = 0;
 extern uint16_t warming_up;
 extern uint8_t warming_flag;
+
+extern uint8_t delay_relay_exit_1;
+extern uint8_t delay_relay_exit_2;
+
+extern uint8_t flag_for_delay_relay_exit_1; //4-20
+extern uint8_t flag_for_delay_relay_exit_2; //4-20
+extern uint16_t timer_delay_relay_exit_1;   //4-20
+extern uint16_t timer_delay_relay_exit_2;   //4-20
+
+extern uint8_t flag_for_delay_relay_exit_1_icp;
+extern uint16_t timer_delay_relay_exit_1_icp;
+extern uint8_t flag_for_delay_relay_exit_2_icp;
+extern uint16_t timer_delay_relay_exit_2_icp;
+
+extern uint8_t flag_for_delay_relay_exit_1_485;
+extern uint16_t timer_delay_relay_exit_1_485;
+extern uint8_t flag_for_delay_relay_exit_2_485;
+extern uint16_t timer_delay_relay_exit_2_485;
+
+extern uint8_t average_4_20_onoff; //4-20
+extern uint8_t QUEUE_LENGHT_4_20;
+extern xQueueHandle queue_4_20;
+extern xQueueHandle velocity_queue_4_20;
+extern xQueueHandle displacement_queue_4_20;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -502,6 +527,14 @@ void read_init_settings(void)
 	size_moving_average_ZSK = settings[33];
 	if ( size_moving_average_ZSK < 1 || size_moving_average_ZSK > 512 ) size_moving_average_ZSK = 1;
 	
+	average_4_20_onoff = settings[35];
+	/* Частота дискр. 25600 / 256 (размер буффера выборки) = 100 усреднений за 1 сек. */
+	if( average_4_20_onoff > 0 ) QUEUE_LENGHT_4_20 = 50; 
+	else 
+	{
+		QUEUE_LENGHT_4_20 = 1;
+	}
+	
 	lo_warning_420 = convert_hex_to_float(&settings[0], 38); 	
 	hi_warning_420 = convert_hex_to_float(&settings[0], 40); 	
 	lo_emerg_420 = convert_hex_to_float(&settings[0], 42); 	
@@ -652,7 +685,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 					break_sensor_485 = 1;
 				}
 				
-
 				
 				//Таймер для задержки на срабатывание реле 1 (канал 4-20)
 				if (flag_delay_relay_1_4_20 == 1)
@@ -749,6 +781,95 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		{
 			warm_timer += 100;		
 		}
+		
+
+
+		//Таймер для задержки на выход из срабатывания реле 1 (канал icp)
+		if (flag_for_delay_relay_exit_1_icp == 1)
+		{						
+			if (timer_delay_relay_exit_1_icp == delay_relay)
+			{
+				flag_for_delay_relay_exit_1_icp = 0;
+				timer_delay_relay_exit_1_icp = 0;						
+			}
+			else timer_delay_relay_exit_1_icp += 100;										
+		}			
+		
+		//Таймер для задержки на выход из срабатывания реле 2 (канал icp)
+		if (flag_for_delay_relay_exit_2_icp == 1)
+		{						
+			if (timer_delay_relay_exit_2_icp == delay_relay)
+			{
+				flag_for_delay_relay_exit_2_icp = 0;
+				timer_delay_relay_exit_2_icp = 0;						
+			}
+			else timer_delay_relay_exit_2_icp += 100;										
+		}
+
+		
+		
+		//Таймер для задержки на выход из срабатывания реле 1 (канал 4-20)
+		if (flag_for_delay_relay_exit_1 == 1)
+		{						
+			if (timer_delay_relay_exit_1 == delay_relay_exit)
+			{					
+					flag_for_delay_relay_exit_1 = 0;
+					timer_delay_relay_exit_1 = 0;			
+			}
+			else 
+			{
+				timer_delay_relay_exit_1 += 100;										
+			}			
+		}			
+		
+		//Таймер для задержки на выход из срабатывания реле 2 (канал 4-20)
+		if (flag_for_delay_relay_exit_2 == 1)
+		{						
+			if (timer_delay_relay_exit_2 == delay_relay_exit)
+			{					
+					flag_for_delay_relay_exit_2 = 0;
+					timer_delay_relay_exit_2 = 0;						
+			}
+			else 
+			{
+				timer_delay_relay_exit_2 += 100;										
+			}			
+		}					
+		
+		
+		
+		//Таймер для задержки на выход из срабатывания реле 1 (канал 485)
+		if (flag_for_delay_relay_exit_1_485 == 1)
+		{						
+			if (timer_delay_relay_exit_1_485 == delay_relay_exit)
+			{					
+					flag_for_delay_relay_exit_1_485 = 0;
+					timer_delay_relay_exit_1_485 = 0;			
+			}
+			else 
+			{
+				timer_delay_relay_exit_1_485 += 100;										
+			}			
+		}			
+		
+		//Таймер для задержки на выход из срабатывания реле 2 (канал 485)
+		if (flag_for_delay_relay_exit_2_485 == 1)
+		{						
+			if (timer_delay_relay_exit_2_485 == delay_relay_exit)
+			{					
+					flag_for_delay_relay_exit_2_485 = 0;
+					timer_delay_relay_exit_2_485 = 0;						
+			}
+			else 
+			{
+				timer_delay_relay_exit_2_485 += 100;										
+			}			
+		}			
+
+	
+		
+		
+		
 		
   }
   /* USER CODE END Callback 1 */
